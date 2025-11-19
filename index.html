@@ -313,12 +313,12 @@
         }
         
         .accuracy-icon {
-            font-size: 18px;
+            font-size: 20px;
             color: #4CAF50;
         }
         
         .accuracy-text {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 500;
             color: #333;
         }
@@ -434,8 +434,9 @@
             flex-direction: column;
             gap: 12px;
             flex: 1;
-            overflow-y: visible;
+            overflow-y: auto;
             padding-right: 5px; 
+            max-height: calc(100% - 80px); /* 确保有空间显示提交按钮 */
         }
         
         .question-option {
@@ -699,9 +700,10 @@
                 height: 12%;
             }
             
-            /* 游戏容器调整 */
+            /* 游戏容器调整 - 移除固定高度，允许自适应 */
             .game-container {
-                min-height: 500px;
+                min-height: auto;
+                height: auto;
             }
             
             /* 生产线调整 */
@@ -784,12 +786,15 @@
                 left: 70%;
             }
             
-            /* 下方面板调整 */
+            /* 下方面板调整 - 关键修改 */
             .bottom-panel {
                 top: 140px;
                 padding: 0 10px;
                 flex-direction: column;
                 gap: 15px;
+                bottom: 15px;
+                position: relative;
+                height: auto;
             }
             
             .info-sidebar, .answer-area {
@@ -802,12 +807,20 @@
                 flex-direction: row;
                 flex-wrap: wrap;
                 align-items: center;
+                height: auto;
             }
             
             .stage-info {
                 width: 100%;
                 padding-bottom: 10px;
                 border-bottom: 1px solid #f0f0f0;
+            }
+            
+            /* 移动端：将计时器和准确率放在同一行 */
+            .timer-accuracy-row {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
             }
             
             .timer, .accuracy-info {
@@ -826,12 +839,23 @@
             
             .answer-area {
                 padding: 15px;
+                height: auto;
                 min-height: 300px;
+                max-height: 500px;
+                display: flex;
+                flex-direction: column;
             }
             
             .question-title {
                 font-size: 16px;
                 padding-bottom: 10px;
+            }
+            
+            .question-options {
+                flex: 1;
+                overflow-y: auto;
+                max-height: calc(100% - 60px);
+                margin-bottom: 10px;
             }
             
             .question-option {
@@ -842,6 +866,7 @@
             .submit-btn {
                 padding: 12px 0;
                 font-size: 16px;
+                margin-top: auto;
             }
             
             /* 弹窗调整 */
@@ -885,8 +910,13 @@
                 border-radius: 8px;
             }
             
+            .timer-accuracy-row {
+                flex-direction: column;
+            }
+            
             .timer, .accuracy-info {
                 width: 100%;
+                margin-bottom: 10px;
             }
             
             .info-sidebar {
@@ -976,14 +1006,17 @@
                         <span class="stage-text" id="sidebarStageText">第1关：贮藏技术基础</span>
                     </div>
                     
-                    <div class="timer">
-                        <span class="timer-icon">⏱️</span>
-                        <span class="timer-text" id="sidebarTimer">00:00</span>
-                    </div>
-                    
-                    <div class="accuracy-info">
-                        <span class="accuracy-icon">🎯</span>
-                        <span class="accuracy-text" id="accuracyText">准确率：0%</span>
+                    <!-- 移动端：计时器和准确率放在同一行 -->
+                    <div class="timer-accuracy-row">
+                        <div class="timer">
+                            <span class="timer-icon">⏱️</span>
+                            <span class="timer-text" id="sidebarTimer">00:00</span>
+                        </div>
+                        
+                        <div class="accuracy-info">
+                            <span class="accuracy-icon">🎯</span>
+                            <span class="accuracy-text" id="accuracyText">准确率：0%</span>
+                        </div>
                     </div>
                     
                     <div class="answer-status">
@@ -1633,6 +1666,9 @@
             updateAccuracy();
             activateProductionIcon(1);
             
+            // 调整游戏容器高度
+            adjustGameContainerHeight();
+            
             // 原料投入动画
             setTimeout(() => {
                 rawMaterial.style.opacity = 1;
@@ -1704,10 +1740,10 @@
             const bottomMargin = parseInt(getComputedStyle(document.querySelector('.bottom-panel')).bottom);
             
             // 计算所需总高度
-            const requiredHeight = topMargin + productionLineHeight + bottomPanelHeight + bottomMargin;
+            const requiredHeight = topMargin + productionLineHeight + bottomPanelHeight + bottomMargin + 30;
             
-            // 设置游戏容器高度，至少为600px
-            gameContainer.style.height = Math.max(600, requiredHeight) + 'px';
+            // 设置游戏容器高度，确保内容完全显示
+            gameContainer.style.height = requiredHeight + 'px';
         }
 
         // 提交答案 - 统一所有题目逻辑：答对显对应正确弹窗，答错显错误弹窗
