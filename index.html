@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>农产品贮藏与加工技术闯关游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 10px 0;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 766px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* 封面样式 - 适配766x600图片 */
+        .cover-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .cover {
+            position: relative;
+            width: 766px;
+            height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            background-color: #fff;
+        }
+        
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            background-image: url("封面.png"); /* 第二张图片作为封面 */
+            background-size: cover;
+            background-position: center;
+            opacity: 1;
+        }
+        
+        .cover-btn {
+            position: absolute;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        /* 帮助按钮 - 左上角提示按钮精准定位 */
+        .help-btn {
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: transparent;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: transparent;
+            box-shadow: none;
+        }
+        
+        .help-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+            color: transparent;
+        }
+
+        /* START NOW按钮 - 底部中间精准定位，适配原图片 */
+        .start-btn {
+            position: absolute; 
+            bottom: 34px; 
+            left: 51%; 
+            transform: translateX(-50%);
+            width: 226px; 
+            height: 80px; 
+            background-color: transparent;
+        }
+
+        .start-btn:hover {
+            background-image: url("开始挑战新样式.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        /* 游戏界面样式 - 动态高度 */
+        .game-container {
+            width: 766px;
+            min-height: 600px; /* 最小高度保持600px */
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            display: none;
+            position: relative;
+            overflow: hidden;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234caf50' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        /* 生产线场景 */
+        .production-line {
+            position: absolute;
+            top: 15px; /* 上移减少顶部留白 */
+            left: 20px;
+            right: 20px;
+            height: 160px; /* 减少高度 */
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            z-index: 10;
+        }
+        
+        /* 生产线传送带（优化样式） */
+        .conveyor-belt {
+            position: absolute;
+            bottom: 50px; /* 上移 */
+            left: 120px;
+            right: 120px;
+            height: 25px; /* 减少高度 */
+            background-color: #d0d0d0;
+            z-index: 20;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15) inset, 0 3px 8px rgba(136, 136, 136, 0.3);
+            background-image: linear-gradient(to right, rgba(0,0,0,0.1) 20px, transparent 20px);
+            background-size: 30px 30px;
+            background-repeat: repeat-x;
+            background-position: center;
+            border-radius: 3px;
+        }
+        
+        /* 生产线节点 */
+        .production-node {
+            position: absolute;
+            bottom: 50px; /* 上移 */
+            width: 80px;
+            height: 50px; /* 减少高度 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 30;
+            font-size: 45px; /* 缩小图标 */
+        }
+        
+        .raw-materials { /* 原料区 */
+            left: 40px;
+        }
+        
+        .processing-plant { /* 加工区 */
+            right: 40px;
+        }
+        
+        /* 生产线上的农产品 */
+        .agri-product {
+            position: absolute;
+            font-size: 28px; /* 缩小图标 */
+            z-index: 45;
+            transition: transform 0.8s ease, opacity 0.8s ease, left 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+        }
+        
+        .raw-product {
+            left: 70px;
+            bottom: 70px; /* 上移 */
+        }
+        
+        .processing-product {
+            left: 160px;
+            bottom: 60px; /* 上移 */
+        }
+        
+        .finished-product {
+            right: 70px;
+            bottom: 70px; /* 上移 */
+        }
+        
+        /* 生产线节点图标 */
+        .production-icon {
+            position: absolute;
+            bottom: 50px; /* 上移 */
+            width: 35px;
+            height: 50px;
+            z-index: 35;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .production-icon-symbol {
+            font-size: 28px; /* 缩小图标 */
+            color: #8BC34A;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
+        
+        .production-icon.active .production-icon-symbol {
+            animation: iconShine 0.8s infinite;
+            color: #4CAF50;
+        }
+        
+        @keyframes iconShine {
+            0%, 100% { color: #8BC34A; transform: scale(1); }
+            50% { color: #4CAF50; transform: scale(1.2); }
+        }
+        
+        .production-icon-1 {
+            left: 35%;
+        }
+        
+        .production-icon-2 {
+            left: 65%;
+        }
+        
+        /* 生产线特效 */
+        .production-effect {
+            position: absolute;
+            font-size: 22px; /* 缩小图标 */
+            z-index: 50;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .effect-1 {
+            top: 30px; /* 上移 */
+            left: 35%;
+        }
+        
+        .effect-2 {
+            top: 30px; /* 上移 */
+            left: 65%;
+        }
+        
+        /* 下方信息+答题区域 - 动态调整 */
+        .bottom-panel {
+            position: absolute;
+            top: 190px; /* 上移以利用空间 */
+            left: 0;
+            right: 0;
+            bottom: 15px; /* 减少底部留白 */
+            padding: 0 20px;
+            display: flex;
+            gap: 20px;
+            z-index: 5;
+        }
+        
+        /* 左侧：阶段区域 */
+        .info-sidebar {
+            width: 32%;
+            background-color: white;
+            border-radius: 12px;
+            padding: 18px 15px; /* 减少内边距 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 18px; /* 减少间距 */
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 阶段区域底部装饰 */
+        .sidebar-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px; /* 减少高度 */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            opacity: 0.12;
+            z-index: 1;
+        }
+        
+        .decor-item {
+            font-size: 24px; /* 缩小图标 */
+            color: #4CAF50;
+        }
+        
+        /* 答题准确率 */
+        .accuracy-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px; /* 减少内边距 */
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .accuracy-icon {
+            font-size: 18px; /* 缩小图标 */
+            color: #4CAF50;
+        }
+        
+        .accuracy-text {
+            font-size: 14px; /* 缩小字体 */
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* 阶段显示 - 农产品主题色 */
+        .stage-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px; /* 减少内边距 */
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stage-icon {
+            font-size: 22px; /* 缩小图标 */
+            color: #8BC34A;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .stage-text {
+            font-size: 15px; /* 缩小字体 */
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* 计时器 */
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px; /* 减少内边距 */
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .timer-icon {
+            font-size: 20px; /* 缩小图标 */
+            color: #4CAF50;
+        }
+        
+        .timer-text {
+            font-size: 15px; /* 缩小字体 */
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* 答题情况 */
+        .answer-status {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* 减少间距 */
+            position: relative;
+            z-index: 2;
+        }
+        
+        .status-title {
+            font-size: 14px; /* 缩小字体 */
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .status-progress {
+            width: 100%;
+            height: 7px; /* 减少高度 */
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .status-desc {
+            font-size: 13px; /* 缩小字体 */
+            color: #666;
+            text-align: right;
+        }
+        
+        /* 右侧：答题区域 - 取消滚动条，自适应高度 */
+        .answer-area {
+            width: 68%;
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+        
+        .question-title {
+            font-size: 17px; /* 缩小字体 */
+            font-weight: 600;
+            color: #333;
+            line-height: 1.5; /* 调整行高 */
+            padding-bottom: 15px; /* 减少内边距 */
+            border-bottom: 1px solid #f0f0f0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            flex-shrink: 0; /* 防止题目区域被压缩 */
+        }
+        
+        .question-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* 减少间距 */
+            flex: 1;
+            overflow-y: visible; /* 取消滚动 */
+            padding-right: 5px; 
+        }
+        
+        .question-option {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .option-checkbox {
+            width: 20px; /* 缩小复选框 */
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #4CAF50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .question-option.selected .option-checkbox {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .question-option.selected .option-checkbox::after {
+            content: '✓';
+            font-size: 12px; /* 缩小对勾 */
+        }
+        
+        .question-option:hover {
+            background-color: #f0f9f0;
+            border-color: #4CAF50;
+            transform: translateY(-2px);
+        }
+        
+        .question-option.selected {
+            background-color: #f0f9f0;
+            border-color: #4CAF50;
+        }
+        
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 0; /* 减少内边距 */
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px; /* 缩小字体 */
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 8px rgba(76, 175, 80, 0.2);
+            margin-top: auto;
+            flex-shrink: 0; /* 防止按钮被压缩 */
+        }
+        
+        .submit-btn:disabled {
+            background-color: #b8dbda;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            background-color: #388E3C;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        /* 弹窗样式 - 优化宽高 */
+        .modal {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 80px;
+            z-index: 200;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px; /* 减小内边距降低高度 */
+            border-radius: 12px;
+            width: 60%; /* 增加宽度占比 */
+            max-width: 400px; /* 提高最大宽度 */
+            max-height: 50%; /* 降低最大高度 */
+            overflow-y: auto;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            border-top: 5px solid #4CAF50;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .modal-text {
+            font-size: 16px; /* 缩小字体节省空间 */
+            line-height: 1.6; /* 调整行高减少高度 */
+            margin-bottom: 20px; /* 减小底部间距 */
+            color: #555;
+        }
+        
+        /* 玩法指导特殊样式 */
+        .guide-section {
+            margin-bottom: 25px;
+        }
+        
+        .guide-title {
+            font-size: 18px;
+            color: #4CAF50;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .guide-list {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .guide-list li {
+            margin-bottom: 8px; /* 减小列表项间距 */
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: #999;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            color: #4CAF50;
+            background-color: #f0f9f0;
+        }
+        
+        .confirm-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .confirm-btn:hover {
+            background-color: #388E3C;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        }
+        
+        /* 通关弹窗特殊样式 */
+        .success-icon {
+            font-size: 85px;
+            text-align: center;
+            margin-bottom: 25px;
+            animation: bounce 1s;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        /* 结果统计弹窗 - 优化布局 */
+        .result-container {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .result-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .result-stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .result-stats {
+            flex: 1;
+            font-size: 16px;
+            padding: 12px 0;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            margin: 0 5px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        /* 隐藏音频元素 */
+        .audio-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 音频元素容器 -->
+    <div class="audio-container">
+        <!-- 背景音乐 - 循环播放 -->
+        <audio id="bgMusic" loop>
+            <source src="background.mp3" type="audio/mpeg">
+        <!-- 帮助弹窗相关音效 -->
+        <audio id="helpSound">
+            <source src="help.mp3" type="audio/mpeg">
+        <!-- 开始游戏音效 -->
+        <audio id="startSound">
+            <source src="start.mp3" type="audio/mpeg">
+        <!-- 答题正确音效 -->
+        <audio id="correctSound">
+            <source src="correct.mp3" type="audio/mpeg">
+        <!-- 答题错误音效 -->
+        <audio id="wrongSound">
+            <source src="wrong.mp3" type="audio/mpeg">
+        <!-- 过关音效 -->
+        <audio id="successSound">
+            <source src="success.mp3" type="audio/mpeg">
+        <!-- 滑动音效 -->
+        <audio id="slideSound">
+            <source src="slide.mp3" type="audio/mpeg">
+        
+    </div>
+
+    <div class="container">
+        <!-- 封面 -->
+        <div class="cover-container">
+            <div class="cover">
+                <div class="cover-image"></div>
+                <button class="cover-btn start-btn" id="startBtn"></button>
+                <button class="cover-btn help-btn" id="helpBtn"></button>
+            </div>
+        </div>
+        
+        <!-- 游戏界面 -->
+        <div class="game-container" id="gameContainer">
+            <!-- 生产线场景 -->
+            <div class="production-line">
+                <!-- 传送带 -->
+                <div class="conveyor-belt"></div>
+                
+                <!-- 生产线节点 -->
+                <div class="production-node raw-materials">🌾</div> <!-- 原料区 -->
+                <div class="production-node processing-plant">🏭</div> <!-- 加工区 -->
+                
+                <!-- 生产线上的农产品 -->
+                <div class="agri-product raw-product" id="rawMaterial">🌾</div>
+                <div class="agri-product processing-product" id="processingProduct">🌾</div>
+                <div class="agri-product finished-product" id="finishedProduct">🍞</div>
+                
+                <!-- 生产线节点图标 -->
+                <div class="production-icon production-icon-1">
+                    <div class="production-icon-symbol">🌡️</div>
+                </div>
+                <div class="production-icon production-icon-2">
+                    <div class="production-icon-symbol">⚗️</div>
+                </div>
+                
+                <!-- 生产线特效 -->
+                <div class="production-effect effect-1" id="effect1">✨</div>
+                <div class="production-effect effect-2" id="effect2">✨</div>
+            </div>
+            
+            <!-- 下方信息+答题区域 -->
+            <div class="bottom-panel">
+                <!-- 左侧：阶段区域 -->
+                <div class="info-sidebar">
+                    <div class="stage-info">
+                        <span class="stage-icon" id="sidebarStageIcon">🌱</span>
+                        <span class="stage-text" id="sidebarStageText">第1关：贮藏技术基础</span>
+                    </div>
+                    
+                    <div class="timer">
+                        <span class="timer-icon">⏱️</span>
+                        <span class="timer-text" id="sidebarTimer">00:00</span>
+                    </div>
+                    
+                    <div class="accuracy-info">
+                        <span class="accuracy-icon">🎯</span>
+                        <span class="accuracy-text" id="accuracyText">准确率：0%</span>
+                    </div>
+                    
+                    <div class="answer-status">
+                        <div class="status-title">答题进度</div>
+                        <div class="status-progress">
+                            <div class="progress-fill" id="statusProgress"></div>
+                        </div>
+                        <div class="status-desc" id="statusDesc">0/16 题（总分100分）</div>
+                    </div>
+                    
+                    <!-- 阶段区域底部装饰 -->
+                    <div class="sidebar-decoration">
+                        <div class="decor-item">🌾</div>
+                        <div class="decor-item">🌡️</div>
+                        <div class="decor-item">⚗️</div>
+                        <div class="decor-item">🍞</div>
+                    </div>
+                </div>
+                
+                <!-- 右侧：答题区域 -->
+                <div class="answer-area">
+                    <div class="question-title" id="questionTitle"></div>
+                    <div class="question-options" id="optionsContainer"></div>
+                    <button class="submit-btn" id="submitBtn" disabled>提交答案</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 玩法指导弹窗 -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeHelpBtn">&times;</button>
+            <h2 class="modal-title">农产品贮藏与加工技术闯关指南</h2>
+            
+            <div class="guide-section">
+                <h3 class="guide-title">🏭 生产线场景</h3>
+                <p>你将扮演一名农产品贮藏加工技术员，负责从原料处理到成品生产的全过程。生产线分为两个阶段：贮藏技术基础和加工技术应用。每个阶段都有不同的生产环节，需要你掌握相应的技术知识。</p>
+            </div>
+            
+            <div class="guide-section">
+                <h3 class="guide-title">🎮 游戏玩法</h3>
+                <ol class="guide-list">
+                    <li>生产线从原料处理开始，经过两个关键生产环节</li>
+                    <li>第一环节：贮藏技术基础（10题，每题4分），考察农产品贮藏的核心知识</li>
+                    <li>第二环节：加工技术应用（6题，每题10分），考察农产品加工的实际操作技能</li>
+                    <li>选择正确答案并提交，验证通过后才能进入下一生产环节</li>
+                    <li>回答错误时，系统会展示详细解析，帮助你理解知识点</li>
+                    <li>完成所有生产环节后，即可获得最终成品并查看成绩</li>
+                </ol>
+            </div>
+            
+            <div class="guide-section">
+                <h3 class="guide-title">🏆 计分规则</h3>
+                <ul class="guide-list">
+                    <li>总分100分，答错不得分，答对按题目分值计分</li>
+                    <li>系统会记录你的答题时间和准确率</li>
+                    <li>完成所有关卡后可查看详细成绩统计</li>
+                </ul>
+            </div>
+            
+            <button class="confirm-btn" id="confirmHelpBtn">我明白了</button>
+        </div>
+    </div>
+    
+    <!-- 答案解析弹窗 -->
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <h2 class="modal-title">回答错误</h2>
+            <div class="modal-text" id="errorText"></div>
+            <button class="confirm-btn" id="retryBtn">重新答题</button>
+        </div>
+    </div>
+    
+    <!-- 答对提示弹窗 - 第一阶段 -->
+    <div class="modal" id="correctModal">
+        <div class="modal-content">
+            <h2 class="modal-title">回答正确！</h2>
+            <div class="modal-text">
+                <p>🎉 恭喜你掌握了该知识点！</p>
+                <p>生产线正在进入下一环节🌡️</p>
+            </div>
+            <button class="confirm-btn" id="nextBtn">继续</button>
+        </div>
+    </div>
+    
+    <!-- 答对提示弹窗 - 第二阶段（非最后一题） -->
+    <div class="modal" id="correctModalStage2">
+        <div class="modal-content">
+            <h2 class="modal-title">回答正确！</h2>
+            <div class="modal-text">
+                <p>🎉 恭喜你掌握了该实操技能！</p>
+                <p>生产线正在进入加工环节⚗️</p>
+            </div>
+            <button class="confirm-btn" id="nextBtnStage2">继续</button>
+        </div>
+    </div>
+    
+    <!-- 进阶提示弹窗 - 美化版本 -->
+    <div class="modal" id="advanceModal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎉 进阶挑战开启！</h2>
+            <div class="modal-text">
+                <p>✅ 恭喜完成贮藏技术基础阶段！当前得分：<span id="advanceScore">0</span>分</p>
+                <p>接下来是"加工技术应用"进阶阶段（每题10分），考验你对农产品加工的实际操作能力和专业知识的综合运用！</p>
+                <p>准备好迎接更具挑战性的技术难题了吗？让我们开始吧！</p>
+            </div>
+            <button class="confirm-btn" id="confirmAdvanceBtn">开始进阶挑战</button>
+        </div>
+    </div>
+    
+    <!-- 通关弹窗 -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="success-icon">🎉</div>
+            <h2 class="modal-title">恭喜通关！</h2>
+            <div class="modal-text">
+                <p>生产线成功完成所有环节！你已熟练掌握《农产品贮藏与加工技术》核心知识和实操技能！</p>
+                <p>最终得分：<span id="finalScore">0</span>分</p>
+            </div>
+            <button class="confirm-btn" id="viewResultBtn">查看成绩</button>
+        </div>
+    </div>
+    
+    <!-- 结果统计弹窗 -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="result-container">
+                <h2 class="result-title">成绩统计</h2>
+                
+                <div class="result-stats-row">
+                    <div class="result-stats" id="correctCount">答对: 0题</div>
+                    <div class="result-stats" id="wrongCount">答错: 0题</div>
+                </div>
+                
+                <div class="result-stats-row">
+                    <div class="result-stats" id="scoreText">得分: 0/100分</div>
+                    <div class="result-stats" id="accuracyResult">准确率: 0%</div>
+                </div>
+                
+                <div class="result-stats-row">
+                    <div class="result-stats" id="timeText">用时: 00:00</div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="scoreProgress"></div>
+                </div>
+                <button class="confirm-btn" id="restartBtn">重新开始</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增：第十题查看答案弹窗 -->
+    <div class="modal" id="answerModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeAnswerBtn">&times;</button>
+            <h2 class="modal-title">题目解析</h2>
+            <div class="modal-text" id="answerExplanation"></div>
+            <button class="confirm-btn" id="closeAnswerConfirmBtn">我知道了</button>
+        </div>
+    </div>
+
+    <script>
+        // 获取音频元素并设置音量
+        const bgMusic = document.getElementById('bgMusic');
+        const helpSound = document.getElementById('helpSound');
+        const startSound = document.getElementById('startSound');
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+        const successSound = document.getElementById('successSound');
+        const slideSound = document.getElementById('slideSound'); // 新增滑动音效
+
+        // 设置音量
+        bgMusic.volume = 0.7;
+        helpSound.volume = 0.3;
+        startSound.volume = 0.3;
+        correctSound.volume = 0.3;
+        wrongSound.volume = 0.3;
+        successSound.volume = 0.4;
+        slideSound.volume = 0.3; // 设置滑动音效音量
+
+        // 自动播放背景音乐
+        document.addEventListener('click', function playBackgroundMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play().catch(e => {
+                    console.log('背景音乐播放需要用户交互:', e);
+                });
+            }
+            document.removeEventListener('click', playBackgroundMusic);
+        }, { once: true });
+
+        // 游戏数据 - 农产品贮藏与加工技术题目
+        const gameData = {
+            stages: [
+                {
+                    name: "贮藏技术基础",
+                    icon: "🌡️",
+                    questions: [
+                        {
+                            question: "影响农产品败坏的微生物主要有细菌、霉菌和（   ）",
+                            options: [
+                                "A. 酵母菌",
+                                "B. 放线菌",
+                                "C. 噬菌体",
+                                "D. 立克次氏体"
+                            ],
+                            answer: 0,
+                            explanation: "农产品败坏的主要微生物包括细菌、霉菌和酵母菌。酵母菌会导致农产品发酵变质，是贮藏过程中常见的有害微生物之一，因此选A。"
+                        },
+                        {
+                            question: "常温贮藏是利用自然温度变化和简易的场所来维持一定的（   ）进行保藏的方法",
+                            options: [
+                                "A. 贮藏温度",
+                                "B. 贮藏湿度",
+                                "C. 贮藏光照",
+                                "D. 贮藏气压"
+                            ],
+                            answer: 0,
+                            explanation: "常温贮藏的核心是通过自然温度调节维持适宜的贮藏温度，利用简易场所（如地窖、通风库）实现农产品短期保鲜，因此选A。"
+                        },
+                        {
+                            question: "机械冷藏是利用制冷机组和保温隔热性能良好的库房，保持恒定的（   ）来进行贮藏",
+                            options: [
+                                "A. 高温",
+                                "B. 低温",
+                                "C. 常温",
+                                "D. 变温"
+                            ],
+                            answer: 1,
+                            explanation: "机械冷藏的关键是通过制冷设备创造恒定低温环境，抑制微生物生长和农产品呼吸作用，延长贮藏期，因此选B。"
+                        },
+                        {
+                            question: "气调贮藏简称CA贮藏，指在低温条件下，改变贮藏环境中（   ）成分的贮藏方法",
+                            options: [
+                                "A. 气体",
+                                "B. 液体",
+                                "C. 固体",
+                                "D. 胶体"
+                            ],
+                            answer: 0,
+                            explanation: "气调贮藏通过调整环境中的气体成分（如降低氧气浓度、提高二氧化碳浓度），抑制农产品呼吸作用和衰老进程，因此选A。"
+                        },
+                        {
+                            question: "对于具有呼吸高峰的果实，在高峰前进行辐照处理，能抑制高峰出现的原因是干扰了（   ）的合成",
+                            options: [
+                                "A. 脱落酸",
+                                "B. 生长素",
+                                "C. 细胞分裂素",
+                                "D. 乙烯"
+                            ],
+                            answer: 3,
+                            explanation: "乙烯是促进果实成熟的关键激素，呼吸高峰前乙烯合成增加。辐照处理可干扰乙烯合成，从而抑制呼吸高峰，延长贮藏期，因此选D。"
+                        },
+                        {
+                            question: "晚熟、皮厚、果肉致密、果面富集蜡质等是（   ）品种应具有的性状",
+                            options: [
+                                "A. 早熟",
+                                "B. 耐贮运",
+                                "C. 鲜食",
+                                "D. 加工"
+                            ],
+                            answer: 1,
+                            explanation: "耐贮运品种需要具备皮厚、果肉致密、蜡质层厚等性状，以减少运输过程中的机械损伤和水分流失，因此选B。"
+                        },
+                        {
+                            question: "罐制品在常温下可保存（   ）年不坏",
+                            options: [
+                                "A. 1-2",
+                                "B. 3-4",
+                                "C. 5-6",
+                                "D. 7-8"
+                            ],
+                            answer: 0,
+                            explanation: "罐制品通过高温灭菌和密封包装，常温下保质期通常为1-2年，超过后可能出现密封失效、微生物污染等问题，因此选A。"
+                        },
+                        {
+                            question: "干制品的含水量应控制在（   ）%范围内",
+                            options: [
+                                "A. 10～20",
+                                "B. 20～30",
+                                "C. 30～40",
+                                "D. 40～50"
+                            ],
+                            answer: 0,
+                            explanation: "干制品的含水量控制在10-20%时，可有效抑制微生物生长繁殖，同时保持产品品质，延长保质期，因此选A。"
+                        },
+                        {
+                            question: "散堆上层麦粒吸水膨胀，造成（   ）是小麦保藏中最常见的现象",
+                            options: [
+                                "A. 发芽",
+                                "B. 霉变",
+                                "C. 结顶",
+                                "D. 虫蛀"
+                            ],
+                            answer: 2,
+                            explanation: "小麦散堆贮藏时，上层麦粒易吸收空气中的水分而膨胀，导致颗粒结块形成结顶现象，影响通风和贮藏安全，因此选C。"
+                        },
+                        {
+                            question: "在金属催化剂作用下，氢加到甘油三酸酯的不饱和脂肪双键上的反应称为油脂的（   ）",
+                            options: [
+                                "A. 氧化",
+                                "B. 氢化",
+                                "C. 水解",
+                                "D. 分解"
+                            ],
+                            answer: 1,
+                            explanation: "油脂氢化是指在催化剂作用下，不饱和脂肪酸的双键与氢结合生成饱和脂肪酸的反应，可提高油脂稳定性和熔点，因此选B。"
+                        }
+                    ],
+                    checkpoint: 1,
+                    type: "single",
+                    scorePerQ: 4 // 第一阶段每题4分
+                },
+                {
+                    name: "加工技术应用",
+                    icon: "⚗️",
+                    questions: [
+                        {
+                            question: "井窖（   ）常见，可贮藏大白菜、萝卜、马铃薯、柑桔等农产品",
+                            options: [
+                                "A. 南方",
+                                "B. 北方"
+                            ],
+                            answer: 1,
+                            explanation: "井窖是北方地区常见的简易贮藏设施，利用地下温度稳定的特点，适合贮藏耐低温的根茎类和果实类农产品，因此选B。"
+                        },
+                        {
+                            question: "气调库运行中要定期对气体成分进行检测，气体浓度的波动最好控制在（   ）",
+                            options: [
+                                "A. 0.1%以内",
+                                "B. 0.2%以内",
+                                "C. 0.3%以内",
+                                "D. 0.4%以内"
+                            ],
+                            answer: 2,
+                            explanation: "气调贮藏对气体浓度稳定性要求较高，波动控制在0.3%以内可保证贮藏效果，避免农产品因气体成分突变而受损，因此选C。"
+                        },
+                        {
+                            question: "果实的糖度用（   ）进行测量",
+                            options: [
+                                "A. 手持糖度计",
+                                "B. 分光光度法",
+                                "C. 手持硬度计"
+                            ],
+                            answer: 0,
+                            explanation: "手持糖度计是农产品加工中常用的快速检测工具，通过折射原理测量果实可溶性固形物含量（糖度），操作简便，因此选A。"
+                        },
+                        {
+                            question: "以下哪种水果是对乙烯敏感性较强的果实，贮藏中需降低环境乙烯浓度",
+                            options: [
+                                "A. 柠檬",
+                                "B. 苹果",
+                                "C. 龙眼",
+                                "D. 葡萄"
+                            ],
+                            answer: 1,
+                            explanation: "苹果是典型的呼吸高峰型果实，自身会大量产生乙烯，同时对乙烯敏感性强，高浓度乙烯会加速其成熟衰老，因此选B。"
+                        },
+                        {
+                            question: "稻谷籽粒的长度、宽度和厚度称为稻谷的（   ）",
+                            options: [
+                                "A. 粒度",
+                                "B. 形状指数",
+                                "C. 粒型指数",
+                                "D. 千粒数"
+                            ],
+                            answer: 0,
+                            explanation: "粒度是指谷物颗粒的三维尺寸（长、宽、厚），是稻谷分级、加工工艺选择的重要指标，因此选A。"
+                        },
+                        {
+                            question: "影响挂面和面效果的主要因素有（   ）",
+                            options: [
+                                "A. 水分",
+                                "B. 时间",
+                                "C. 温度",
+                                "D. 以上都是"
+                            ],
+                            answer: 3,
+                            explanation: "挂面和面时，水分控制面团软硬、时间影响面筋形成、温度影响酶活性和面团稳定性，三者均是关键影响因素，因此选D。"
+                        }
+                    ],
+                    checkpoint: 2,
+                    type: "single",
+                    scorePerQ: 10 // 第二阶段每题10分
+                }
+            ]
+        };
+
+        // 生产线节点位置
+        const productionNodes = {
+            start: 70,
+            1: 766 * 0.35 - 20,
+            2: 766 * 0.65 - 20,
+            end: 766 - 140
+        };
+
+        // 游戏状态
+        let gameState = {
+            currentStage: 0,
+            currentQuestion: 0,
+            score: 0,
+            correctAnswers: 0,
+            totalAttempts: 0,
+            wrongAttempts: 0,
+            startTime: null,
+            timerInterval: null,
+            elapsedTime: 0,
+            selectedOptions: [],
+            completedQuestions: [],
+            totalQuestions: 16 // 10+6题
+        };
+
+        // DOM 元素
+        const startBtn = document.getElementById('startBtn');
+        const helpBtn = document.getElementById('helpBtn');
+        const gameContainer = document.getElementById('gameContainer');
+        const submitBtn = document.getElementById('submitBtn');
+        const questionTitle = document.getElementById('questionTitle');
+        const optionsContainer = document.getElementById('optionsContainer');
+        
+        // 生产线元素
+        const rawMaterial = document.getElementById('rawMaterial');
+        const processingProduct = document.getElementById('processingProduct');
+        const finishedProduct = document.getElementById('finishedProduct');
+        const effect1 = document.getElementById('effect1');
+        const effect2 = document.getElementById('effect2');
+        
+        // 侧边栏元素
+        const sidebarStageIcon = document.getElementById('sidebarStageIcon');
+        const sidebarStageText = document.getElementById('sidebarStageText');
+        const sidebarTimer = document.getElementById('sidebarTimer');
+        const statusProgress = document.getElementById('statusProgress');
+        const statusDesc = document.getElementById('statusDesc');
+        const accuracyText = document.getElementById('accuracyText');
+        const accuracyResult = document.getElementById('accuracyResult');
+        const correctCount = document.getElementById('correctCount');
+        const wrongCount = document.getElementById('wrongCount');
+        const finalScore = document.getElementById('finalScore');
+        
+        // 其他元素
+        const helpModal = document.getElementById('helpModal');
+        const closeHelpBtn = document.getElementById('closeHelpBtn');
+        const confirmHelpBtn = document.getElementById('confirmHelpBtn');
+        const errorModal = document.getElementById('errorModal');
+        const errorText = document.getElementById('errorText');
+        const retryBtn = document.getElementById('retryBtn');
+        const correctModal = document.getElementById('correctModal');
+        const nextBtn = document.getElementById('nextBtn');
+        const correctModalStage2 = document.getElementById('correctModalStage2');
+        const nextBtnStage2 = document.getElementById('nextBtnStage2');
+        const advanceModal = document.getElementById('advanceModal');
+        const confirmAdvanceBtn = document.getElementById('confirmAdvanceBtn');
+        const successModal = document.getElementById('successModal');
+        const viewResultBtn = document.getElementById('viewResultBtn');
+        const resultModal = document.getElementById('resultModal');
+        const scoreText = document.getElementById('scoreText');
+        const timeText = document.getElementById('timeText');
+        const scoreProgress = document.getElementById('scoreProgress');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // 新增：查看答案弹窗元素
+        const answerModal = document.getElementById('answerModal');
+        const closeAnswerBtn = document.getElementById('closeAnswerBtn');
+        const closeAnswerConfirmBtn = document.getElementById('closeAnswerConfirmBtn');
+        const answerExplanation = document.getElementById('answerExplanation');
+
+        // 事件监听
+        startBtn.addEventListener('click', () => {
+            startSound.play();
+            document.querySelector('.cover-container').style.display = 'none';
+            gameContainer.style.display = 'block';
+            initGame();
+        });
+        
+        // 添加start按钮鼠标悬停音效
+        startBtn.addEventListener('mouseenter', () => {
+            slideSound.currentTime = 0; // 重置音效
+            slideSound.play().catch(e => {
+                console.log('滑动音效播放需要用户交互:', e);
+            });
+        });
+
+        // 新增：帮助按钮鼠标悬停音效
+        helpBtn.addEventListener('mouseenter', () => {
+            slideSound.currentTime = 0; // 重置音效
+            slideSound.play().catch(e => {
+                console.log('滑动音效播放需要用户交互:', e);
+            });
+        });
+        
+        helpBtn.addEventListener('click', () => {
+            helpSound.play();
+            helpModal.style.display = 'flex';
+        });
+        
+        closeHelpBtn.addEventListener('click', () => {
+            helpSound.play();
+            helpModal.style.display = 'none';
+        });
+        
+        confirmHelpBtn.addEventListener('click', () => {
+            helpSound.play();
+            helpModal.style.display = 'none';
+        });
+
+        submitBtn.addEventListener('click', submitAnswer);
+        
+        retryBtn.addEventListener('click', () => {
+            errorModal.style.display = 'none';
+            // 第十题错误时，关闭错误弹窗后显示查看答案
+            const isTenthQuestion = gameState.currentStage === 0 && gameState.currentQuestion === 9;
+            if (isTenthQuestion) {
+                const question = gameData.stages[gameState.currentStage].questions[gameState.currentQuestion];
+                answerExplanation.textContent = question.explanation;
+                answerModal.style.display = 'flex';
+            } else {
+                // 其他题错误，直接重新加载
+                loadQuestion();
+            }
+        });
+        
+        // 第一阶段正确弹窗（含第十题）- 逻辑统一
+        nextBtn.addEventListener('click', () => {
+            correctModal.style.display = 'none';
+            const currentStage = gameData.stages[gameState.currentStage];
+            
+            processingProduct.style.opacity = 0;
+            
+            updateAnswerStatus();
+            updateAccuracy();
+            
+            // 推进题目索引
+            gameState.currentQuestion++;
+            
+            // 判断是否为第一阶段最后一题（第十题）
+            if (gameState.currentQuestion >= currentStage.questions.length) {
+                // 进入进阶阶段
+                document.getElementById('advanceScore').textContent = gameState.score;
+                advanceModal.style.display = 'flex';
+            } else {
+                // 加载下一题
+                loadQuestion();
+                processingProduct.style.opacity = 1;
+                processingProduct.style.left = `${productionNodes[1]}px`;
+            }
+        });
+        
+        // 第二阶段正确弹窗（含最后一题）- 逻辑统一
+        nextBtnStage2.addEventListener('click', () => {
+            correctModalStage2.style.display = 'none';
+            const currentStage = gameData.stages[gameState.currentStage];
+            
+            processingProduct.style.opacity = 0;
+            
+            updateAnswerStatus();
+            updateAccuracy();
+            
+            // 推进题目索引
+            gameState.currentQuestion++;
+            
+            // 判断是否为第二阶段最后一题
+            if (gameState.currentQuestion >= currentStage.questions.length) {
+                // 全部题目完成，显示通关弹窗
+                successSound.play();
+                finalScore.textContent = gameState.score;
+                successModal.style.display = 'flex';
+            } else {
+                // 加载下一题
+                setTimeout(() => {
+                    loadQuestion();
+                    processingProduct.style.opacity = 1;
+                    processingProduct.style.left = `${productionNodes[2]}px`;
+                }, 300);
+            }
+        });
+        
+        confirmAdvanceBtn.addEventListener('click', () => {
+            startSound.play();
+            advanceModal.style.display = 'none';
+            
+            // 从贮藏区移动到加工区的过渡动画（提速：原300→100，1200→500，800→300）
+            processingProduct.style.opacity = 1;
+            processingProduct.style.left = `${productionNodes[1]}px`;
+            processingProduct.style.transform = "scale(1)";
+            
+            setTimeout(() => {
+                processingProduct.style.left = `${productionNodes[2]}px`;
+                setTimeout(() => {
+                    processingProduct.style.opacity = 0;
+                    setTimeout(() => {
+                        nextStage();
+                    }, 300); // 原800ms
+                }, 500); // 原1200ms
+            }, 100); // 原300ms
+        });
+        
+        viewResultBtn.addEventListener('click', () => {
+            successModal.style.display = 'none';
+            showResults();
+        });
+        
+        restartBtn.addEventListener('click', () => {
+            resultModal.style.display = 'none';
+            resetGame();
+            setTimeout(() => {
+                document.querySelector('.cover-container').style.display = 'flex';
+                gameContainer.style.display = 'none';
+            }, 300);
+        });
+
+        // 新增：查看答案弹窗关闭事件
+        closeAnswerBtn.addEventListener('click', () => {
+            answerModal.style.display = 'none';
+            // 关闭解析后重新加载第十题
+            loadQuestion();
+        });
+
+        closeAnswerConfirmBtn.addEventListener('click', () => {
+            answerModal.style.display = 'none';
+            // 关闭解析后重新加载第十题
+            loadQuestion();
+        });
+
+        // 初始化游戏
+        function initGame() {
+            gameState = {
+                currentStage: 0,
+                currentQuestion: 0,
+                score: 0,
+                correctAnswers: 0,
+                totalAttempts: 0,
+                wrongAttempts: 0,
+                startTime: new Date(),
+                timerInterval: setInterval(updateTimer, 1000),
+                elapsedTime: 0,
+                selectedOptions: [],
+                completedQuestions: [],
+                totalQuestions: 16
+            };
+            
+            resetProducts();
+            updateSidebarInfo();
+            updateAnswerStatus();
+            updateAccuracy();
+            activateProductionIcon(1);
+            
+            // 原料投入动画
+            setTimeout(() => {
+                rawMaterial.style.opacity = 1;
+                setTimeout(() => {
+                    rawMaterial.style.transform = `translate(${60}px, -20px)`;
+                    rawMaterial.style.opacity = 0;
+                    setTimeout(() => {
+                        processingProduct.style.opacity = 1;
+                        processingProduct.style.left = `${productionNodes[1]}px`;
+                        setTimeout(() => {
+                            loadQuestion();
+                        }, 800);
+                    }, 600);
+                }, 500);
+            }, 300);
+        }
+
+        // 加载题目 - 修改题号格式为"1. 2. 3. ..."
+        function loadQuestion() {
+            const stage = gameData.stages[gameState.currentStage];
+            const question = stage.questions[gameState.currentQuestion];
+            
+            // 修改题号格式为数字加句号
+            questionTitle.textContent = `${gameState.currentQuestion + 1}. ${question.question}`;
+            optionsContainer.innerHTML = '';
+            gameState.selectedOptions = [];
+            submitBtn.disabled = true;
+            
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'question-option';
+                optionEl.innerHTML = `
+                    <div class="option-checkbox"></div>
+                    <span>${option}</span>
+                `;
+                optionEl.dataset.index = index;
+                
+                optionEl.addEventListener('click', () => {
+                    if (stage.type === 'single') {
+                        document.querySelectorAll('.question-option').forEach(el => el.classList.remove('selected'));
+                        optionEl.classList.add('selected');
+                        gameState.selectedOptions = [index];
+                    } else {
+                        optionEl.classList.toggle('selected');
+                        gameState.selectedOptions = Array.from(document.querySelectorAll('.question-option.selected'))
+                            .map(el => parseInt(el.dataset.index));
+                    }
+                    submitBtn.disabled = gameState.selectedOptions.length === 0;
+                });
+                
+                optionsContainer.appendChild(optionEl);
+            });
+            
+            // 动态调整游戏界面高度
+            adjustGameContainerHeight();
+        }
+
+        // 动态调整游戏界面高度
+        function adjustGameContainerHeight() {
+            const gameContainer = document.getElementById('gameContainer');
+            const bottomPanel = document.querySelector('.bottom-panel');
+            
+            // 计算底部面板的实际高度
+            const bottomPanelHeight = bottomPanel.offsetHeight;
+            
+            // 计算生产线高度和间距
+            const productionLineHeight = 160; // 生产线高度
+            const topMargin = 15; // 生产线顶部间距
+            const bottomMargin = 15; // 底部面板底部间距
+            
+            // 计算所需总高度
+            const requiredHeight = topMargin + productionLineHeight + bottomPanelHeight + bottomMargin;
+            
+            // 设置游戏容器高度，至少为600px
+            gameContainer.style.height = Math.max(600, requiredHeight) + 'px';
+        }
+
+        // 提交答案 - 统一所有题目逻辑：答对显对应正确弹窗，答错显错误弹窗
+        function submitAnswer() {
+            const stage = gameData.stages[gameState.currentStage];
+            const question = stage.questions[gameState.currentQuestion];
+            const questionId = `${gameState.currentStage}-${gameState.currentQuestion}`;
+            let isCorrect = false;
+            const isLastQuestionOfStage = gameState.currentQuestion === stage.questions.length - 1; // 当前阶段最后一题
+            
+            // 判断答案正确性
+            if (stage.type === 'single') {
+                isCorrect = gameState.selectedOptions[0] === question.answer;
+            } else {
+                isCorrect = JSON.stringify([...gameState.selectedOptions].sort()) === JSON.stringify([...question.answer].sort());
+            }
+            
+            gameState.totalAttempts++;
+            
+            // 得分规则：答错不得分，答对按阶段分值加分
+            if (isCorrect && !gameState.completedQuestions.includes(questionId)) {
+                gameState.correctAnswers++;
+                gameState.score += stage.scorePerQ; // 按阶段分值加分
+            }
+            
+            if (!isCorrect) {
+                gameState.wrongAttempts++;
+            }
+            
+            if (!gameState.completedQuestions.includes(questionId)) {
+                gameState.completedQuestions.push(questionId);
+            }
+            
+            // 正确答案处理 - 按阶段显示对应正确弹窗（统一逻辑）
+            if (isCorrect) {
+                correctSound.currentTime = 0;
+                correctSound.play();
+                
+                // 生产线特效
+                if (gameState.currentStage === 0) {
+                    showProductionEffect(1);
+                    setTimeout(() => {
+                        processingProduct.style.left = `${productionNodes[1]}px`;
+                        processingProduct.style.opacity = 0;
+                    }, 500);
+                    correctModal.style.display = 'flex'; // 第一阶段统一用correctModal
+                } else {
+                    showProductionEffect(2);
+                    setTimeout(() => {
+                        processingProduct.style.left = `${productionNodes[2]}px`;
+                        processingProduct.style.opacity = 0;
+                    }, 500);
+                    correctModalStage2.style.display = 'flex'; // 第二阶段统一用correctModalStage2
+                }
+                
+                updateAnswerStatus();
+                updateAccuracy();
+            } else {
+                // 错误答案处理 - 统一显示错误弹窗
+                wrongSound.currentTime = 0;
+                wrongSound.play();
+                errorText.textContent = question.explanation;
+                errorModal.style.display = 'flex';
+            }
+        }
+
+        // 显示生产线特效
+        function showProductionEffect(effectNumber) {
+            const effect = effectNumber === 1 ? effect1 : effect2;
+            effect.style.opacity = 1;
+            effect.style.transform = "scale(2)";
+            setTimeout(() => {
+                effect.style.opacity = 0;
+                effect.style.transform = "scale(1)";
+            }, 800);
+        }
+
+        // 下一阶段
+        function nextStage() {
+            gameState.currentStage++;
+            gameState.currentQuestion = 0;
+            updateSidebarInfo();
+            activateProductionIcon(gameData.stages[gameState.currentStage].checkpoint);
+            
+            // 更换产品图标
+            processingProduct.innerHTML = "🍎";
+            // 显示农产品并定位到加工区
+            processingProduct.style.opacity = 1;
+            processingProduct.style.left = `${productionNodes[2]}px`;
+            loadQuestion();
+        }
+
+        // 更新侧边栏信息
+        function updateSidebarInfo() {
+            const stage = gameData.stages[gameState.currentStage];
+            sidebarStageIcon.textContent = stage.icon;
+            sidebarStageText.textContent = `第${gameState.currentStage + 1}关：${stage.name}`;
+        }
+
+        // 更新计时器
+        function updateTimer() {
+            gameState.elapsedTime = Math.floor((new Date() - gameState.startTime) / 1000);
+            const minutes = Math.floor(gameState.elapsedTime / 60).toString().padStart(2, '0');
+            const seconds = (gameState.elapsedTime % 60).toString().padStart(2, '0');
+            sidebarTimer.textContent = `${minutes}:${seconds}`;
+        }
+
+        // 更新答题进度
+        function updateAnswerStatus() {
+            const answeredCount = gameState.completedQuestions.length;
+            const progressPercent = (answeredCount / gameState.totalQuestions) * 100;
+            statusProgress.style.width = `${progressPercent}%`;
+            statusDesc.textContent = `${answeredCount}/16 题（总分100分）`;
+        }
+
+        // 更新准确率
+        function updateAccuracy() {
+            if (gameState.totalAttempts === 0) {
+                accuracyText.textContent = "准确率：0%";
+                return;
+            }
+            
+            const accuracy = Math.round((gameState.correctAnswers / gameState.totalAttempts) * 100);
+            accuracyText.textContent = `准确率：${accuracy}%`;
+        }
+
+        // 激活生产线节点图标
+        function activateProductionIcon(iconNumber) {
+            document.querySelectorAll('.production-icon').forEach(icon => icon.classList.remove('active'));
+            document.querySelector(`.production-icon-${iconNumber}`).classList.add('active');
+        }
+
+        // 生产成品动画（最后一题专用）
+        function produceFinishedProduct() {
+            processingProduct.style.opacity = 1;
+            processingProduct.style.left = `${productionNodes.end + 20}px`;
+            setTimeout(() => {
+                processingProduct.style.transform = `translate(${-70}px, -20px)`;
+                processingProduct.style.opacity = 0;
+                setTimeout(() => {
+                    finishedProduct.style.opacity = 1;
+                    finishedProduct.style.transform = "scale(1.2)";
+                    setTimeout(() => {
+                        finishedProduct.style.transform = "scale(1)";
+                        setTimeout(() => {
+                            finishedProduct.style.opacity = 0;
+                        }, 800);
+                    }, 300);
+                }, 600);
+            }, 500);
+        }
+
+        // 重置产品
+        function resetProducts() {
+            [rawMaterial, processingProduct, finishedProduct].forEach(product => {
+                product.style.opacity = 0;
+                product.style.transform = "translate(0, 0)";
+                product.style.left = "";
+            });
+            
+            // 重置产品图标
+            rawMaterial.innerHTML = "🌾";
+            processingProduct.innerHTML = "🌾";
+            finishedProduct.innerHTML = "🍞";
+        }
+
+        // 显示结果（分数按100分制计算）
+        function showResults() {
+            clearInterval(gameState.timerInterval);
+            const accuracy = gameState.totalAttempts > 0 ? Math.round((gameState.correctAnswers / gameState.totalAttempts) * 100) : 0;
+            const scorePercent = (gameState.score / 100) * 100; // 总分100分
+            
+            correctCount.textContent = `答对: ${gameState.correctAnswers}题`;
+            wrongCount.textContent = `答错: ${gameState.wrongAttempts}题`;
+            scoreText.textContent = `得分: ${gameState.score}/100分`;
+            timeText.textContent = `用时: ${sidebarTimer.textContent}`;
+            accuracyResult.textContent = `准确率: ${accuracy}%`;
+            scoreProgress.style.width = `${scorePercent}%`;
+            
+            resultModal.style.display = 'flex';
+        }
+
+        // 重置游戏
+        function resetGame() {
+            clearInterval(gameState.timerInterval);
+            resetProducts();
+            [helpModal, errorModal, correctModal, correctModalStage2, advanceModal, successModal, resultModal].forEach(modal => {
+                modal.style.display = 'none';
+            });
+            document.querySelectorAll('.production-icon').forEach(icon => icon.classList.remove('active'));
+            questionTitle.textContent = '';
+            optionsContainer.innerHTML = '';
+            submitBtn.disabled = true;
+        }
+    </script>
+</body>
+</html>
