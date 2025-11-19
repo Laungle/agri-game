@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>农产品贮藏与加工技术闯关游戏</title>
     <style>
         * {
@@ -16,49 +16,35 @@
             background-color: #f5f5f5;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
-            overflow: hidden;
-            padding: 10px;
+            padding: 10px 0;
         }
         
-        .game-wrapper {
+        .container {
             width: 100%;
-            max-width: 1000px;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            touch-action: pan-x pan-y;
+            max-width: 766px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
-        .game-container {
-            width: 100%;
-            height: 100%;
-            background-color: #f9f9f9;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-            position: relative;
-            overflow: hidden;
-            background-image: 
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234caf50' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            transform-origin: center;
-        }
-        
-        /* 封面样式 - 自适应 */
+        /* 封面样式 - 响应式设计 */
         .cover-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            height: 100%;
-            position: relative;
+            max-width: 766px;
         }
         
         .cover {
             position: relative;
             width: 100%;
-            height: 100%;
+            height: auto;
+            aspect-ratio: 766/600; /* 保持封面图片比例 */
             border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
             overflow: hidden;
             background-color: #fff;
         }
@@ -66,8 +52,8 @@
         .cover-image {
             width: 100%;
             height: 100%;
-            background-image: url("封面.png");
-            background-size: contain; /* 确保封面完整显示 */
+            background-image: url("封面.png"); /* 第二张图片作为封面 */
+            background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
             opacity: 1;
@@ -81,13 +67,12 @@
             z-index: 10;
         }
         
+        /* 帮助按钮 - 响应式定位 */
         .help-btn {
-            top: 5%;
-            left: 5%;
-            width: 8%;
-            height: 8%;
-            max-width: 40px;
-            max-height: 40px;
+            top: 3.3%;
+            left: 2.6%;
+            width: 5.2%;
+            height: 6.7%;
             background-color: transparent;
             border-radius: 50%;
             display: flex;
@@ -103,54 +88,61 @@
             color: transparent;
         }
 
+        /* START NOW按钮 - 响应式定位 */
         .start-btn {
             position: absolute; 
-            bottom: 7%; 
-            left: 51%; 
+            bottom: 5.7%; 
+            left: 50%; 
             transform: translateX(-50%);
-            width: 30%; 
-            max-width: 818px; 
-            height: 13%;
-            max-height: 466px;
+            width: 29.5%; 
+            height: 13.3%; 
             background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
             background-image: url("开始挑战新样式.png");
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-        }
-
-        .start-btn:hover {
             transform: translateX(-50%) scale(1.05);
         }
 
-        /* 游戏界面样式 */
-        .game-screen {
+        /* 游戏界面样式 - 响应式设计 */
+        .game-container {
             width: 100%;
-            height: 100%;
+            max-width: 766px;
+            min-height: 600px;
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
             display: none;
-            flex-direction: column;
             position: relative;
             overflow: hidden;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234caf50' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         
-        /* 生产线场景 - 自适应 */
+        /* 生产线场景 */
         .production-line {
-            flex-shrink: 0;
-            margin: 15px 20px 0;
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
             height: 160px;
             background-color: rgba(255, 255, 255, 0.85);
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             overflow: hidden;
-            position: relative;
             z-index: 10;
         }
         
+        /* 生产线传送带 */
         .conveyor-belt {
             position: absolute;
             bottom: 50px;
-            left: 15%;
-            right: 15%;
+            left: 120px;
+            right: 120px;
             height: 25px;
             background-color: #d0d0d0;
             z-index: 20;
@@ -162,6 +154,7 @@
             border-radius: 3px;
         }
         
+        /* 生产线节点 */
         .production-node {
             position: absolute;
             bottom: 50px;
@@ -175,13 +168,14 @@
         }
         
         .raw-materials {
-            left: 5%;
+            left: 40px;
         }
         
         .processing-plant {
-            right: 5%;
+            right: 40px;
         }
         
+        /* 生产线上的农产品 */
         .agri-product {
             position: absolute;
             font-size: 28px;
@@ -191,20 +185,21 @@
         }
         
         .raw-product {
-            left: 10%;
+            left: 70px;
             bottom: 70px;
         }
         
         .processing-product {
-            left: 40%;
+            left: 160px;
             bottom: 60px;
         }
         
         .finished-product {
-            right: 10%;
+            right: 70px;
             bottom: 70px;
         }
         
+        /* 生产线节点图标 */
         .production-icon {
             position: absolute;
             bottom: 50px;
@@ -241,6 +236,7 @@
             left: 65%;
         }
         
+        /* 生产线特效 */
         .production-effect {
             position: absolute;
             font-size: 22px;
@@ -259,19 +255,22 @@
             left: 65%;
         }
         
-        /* 下方信息+答题区域 - 自适应 */
+        /* 下方信息+答题区域 - 响应式设计 */
         .bottom-panel {
-            flex: 1;
+            position: absolute;
+            top: 190px;
+            left: 0;
+            right: 0;
+            bottom: 15px;
+            padding: 0 20px;
             display: flex;
-            flex-direction: column;
-            padding: 15px 20px;
-            gap: 15px;
-            overflow: auto;
+            gap: 20px;
             z-index: 5;
         }
         
+        /* 左侧：阶段区域 */
         .info-sidebar {
-            width: 100%;
+            width: 32%;
             background-color: white;
             border-radius: 12px;
             padding: 18px 15px;
@@ -283,6 +282,7 @@
             overflow: hidden;
         }
         
+        /* 阶段区域底部装饰 */
         .sidebar-decoration {
             position: absolute;
             bottom: 0;
@@ -301,7 +301,8 @@
             color: #4CAF50;
         }
         
-        .accuracy-info, .stage-info, .timer {
+        /* 答题准确率 */
+        .accuracy-info {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -311,17 +312,63 @@
             z-index: 2;
         }
         
-        .accuracy-icon, .stage-icon, .timer-icon {
+        .accuracy-icon {
             font-size: 18px;
             color: #4CAF50;
         }
         
-        .accuracy-text, .stage-text, .timer-text {
+        .accuracy-text {
             font-size: 14px;
             font-weight: 500;
             color: #333;
         }
         
+        /* 阶段显示 */
+        .stage-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stage-icon {
+            font-size: 22px;
+            color: #8BC34A;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .stage-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* 计时器 */
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .timer-icon {
+            font-size: 20px;
+            color: #4CAF50;
+        }
+        
+        .timer-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* 答题情况 */
         .answer-status {
             display: flex;
             flex-direction: column;
@@ -357,8 +404,9 @@
             text-align: right;
         }
         
+        /* 右侧：答题区域 */
         .answer-area {
-            width: 100%;
+            width: 68%;
             background-color: white;
             border-radius: 12px;
             padding: 20px; 
@@ -367,11 +415,6 @@
             flex-direction: column;
             gap: 15px;
             overflow: hidden;
-            /* 增加高度并允许滚动 */
-            flex: 1;
-            overflow-y: auto;
-            max-height: 400px;
-            position: relative;
         }
         
         .question-title {
@@ -409,7 +452,6 @@
             line-height: 1.5;
             word-wrap: break-word;
             overflow-wrap: break-word;
-            -webkit-tap-highlight-color: transparent;
         }
         
         .option-checkbox {
@@ -457,11 +499,6 @@
             box-shadow: 0 3px 8px rgba(76, 175, 80, 0.2);
             margin-top: auto;
             flex-shrink: 0;
-            -webkit-tap-highlight-color: transparent;
-            /* 确保提交按钮可见 */
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
         }
         
         .submit-btn:disabled {
@@ -480,7 +517,7 @@
         /* 弹窗样式 */
         .modal {
             display: none;
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -496,9 +533,9 @@
             background-color: white;
             padding: 20px;
             border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80%;
+            width: 60%;
+            max-width: 400px;
+            max-height: 50%;
             overflow-y: auto;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
             position: relative;
@@ -521,6 +558,7 @@
             color: #555;
         }
         
+        /* 玩法指导特殊样式 */
         .guide-section {
             margin-bottom: 25px;
         }
@@ -556,7 +594,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            -webkit-tap-highlight-color: transparent;
         }
         
         .close-btn:hover {
@@ -577,7 +614,6 @@
             margin: 0 auto;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-            -webkit-tap-highlight-color: transparent;
         }
         
         .confirm-btn:hover {
@@ -586,6 +622,7 @@
             box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
         }
         
+        /* 通关弹窗特殊样式 */
         .success-icon {
             font-size: 85px;
             text-align: center;
@@ -598,6 +635,7 @@
             50% { transform: scale(1.2); }
         }
         
+        /* 结果统计弹窗 */
         .result-container {
             text-align: center;
             padding: 10px;
@@ -644,87 +682,55 @@
         .audio-container {
             display: none;
         }
-
-        /* 缩放控制按钮 */
-        .zoom-controls {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 100;
-        }
         
-        .zoom-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ddd;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .zoom-btn:hover {
-            background-color: white;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-        }
-
-        /* 适配中屏幕设备（iPad） */
-        @media (min-width: 768px) {
-            .game-wrapper {
-                height: 90vh;
-                max-height: 800px;
+        /* 响应式设计 - 媒体查询 */
+        @media (max-width: 768px) {
+            /* 封面按钮位置调整 */
+            .help-btn {
+                top: 3.3%;
+                left: 2.6%;
+                width: 8%;
+                height: 8%;
             }
             
-            .bottom-panel {
-                flex-direction: row;
+            .start-btn {
+                bottom: 5.7%;
+                width: 40%;
+                height: 12%;
             }
             
-            .info-sidebar {
-                width: 32%;
+            /* 游戏容器调整 */
+            .game-container {
+                min-height: 500px;
             }
             
-            .answer-area {
-                width: 68%;
-                max-height: 500px;
-            }
-        }
-
-        /* 适配小屏幕设备（手机） */
-        @media (max-width: 767px) {
-            body {
-                padding: 5px;
-            }
-            
-            .game-wrapper {
-                height: 95vh;
-            }
-            
-            .cover-image {
-                background-size: contain; /* 确保封面完整显示 */
-            }
-            
+            /* 生产线调整 */
             .production-line {
                 height: 120px;
-                margin: 10px 10px 0;
+                top: 10px;
+                left: 10px;
+                right: 10px;
             }
             
             .conveyor-belt {
-                height: 20px;
+                left: 80px;
+                right: 80px;
                 bottom: 40px;
             }
             
             .production-node {
                 bottom: 40px;
+                width: 60px;
                 height: 40px;
                 font-size: 35px;
+            }
+            
+            .raw-materials {
+                left: 20px;
+            }
+            
+            .processing-plant {
+                right: 20px;
             }
             
             .agri-product {
@@ -732,55 +738,100 @@
             }
             
             .raw-product {
+                left: 50px;
                 bottom: 55px;
             }
             
             .processing-product {
-                bottom: 50px;
+                left: 120px;
+                bottom: 45px;
             }
             
             .finished-product {
+                right: 50px;
                 bottom: 55px;
             }
             
             .production-icon {
                 bottom: 40px;
+                width: 30px;
+                height: 40px;
             }
             
             .production-icon-symbol {
                 font-size: 22px;
             }
             
+            .production-icon-1 {
+                left: 30%;
+            }
+            
+            .production-icon-2 {
+                left: 70%;
+            }
+            
             .production-effect {
                 font-size: 18px;
             }
             
-            .effect-1, .effect-2 {
+            .effect-1 {
                 top: 20px;
+                left: 30%;
             }
             
+            .effect-2 {
+                top: 20px;
+                left: 70%;
+            }
+            
+            /* 下方面板调整 */
             .bottom-panel {
-                padding: 10px;
-                gap: 10px;
+                top: 140px;
+                padding: 0 10px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .info-sidebar, .answer-area {
+                width: 100%;
             }
             
             .info-sidebar {
-                padding: 15px 10px;
+                padding: 15px;
                 gap: 15px;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+            
+            .stage-info {
+                width: 100%;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            
+            .timer, .accuracy-info {
+                border-bottom: none;
+                padding-bottom: 0;
+                width: 48%;
+            }
+            
+            .answer-status {
+                width: 100%;
+            }
+            
+            .sidebar-decoration {
+                display: none;
             }
             
             .answer-area {
                 padding: 15px;
-                max-height: 350px;
+                min-height: 300px;
             }
             
             .question-title {
                 font-size: 16px;
                 padding-bottom: 10px;
-            }
-            
-            .question-options {
-                gap: 10px;
             }
             
             .question-option {
@@ -793,9 +844,15 @@
                 font-size: 16px;
             }
             
+            /* 弹窗调整 */
+            .modal {
+                padding-top: 50px;
+            }
+            
             .modal-content {
-                padding: 15px;
-                width: 95%;
+                width: 90%;
+                max-width: none;
+                max-height: 70%;
             }
             
             .modal-title {
@@ -805,148 +862,35 @@
             .modal-text {
                 font-size: 15px;
             }
-            
-            .guide-title {
-                font-size: 16px;
-            }
-            
-            .confirm-btn {
-                padding: 10px 25px;
-                font-size: 15px;
-            }
-            
-            .zoom-controls {
-                bottom: 10px;
-                right: 10px;
-            }
-            
-            .zoom-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 18px;
-            }
         }
-
-        /* 适配超小屏幕手机 */
-        @media (max-width: 375px) {
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px 0;
+            }
+            
+            .cover {
+                border-radius: 8px;
+            }
+            
+            .game-container {
+                border-radius: 8px;
+            }
+            
             .production-line {
-                height: 100px;
+                border-radius: 8px;
             }
             
-            .conveyor-belt {
-                height: 15px;
-                bottom: 35px;
+            .info-sidebar, .answer-area {
+                border-radius: 8px;
             }
             
-            .production-node {
-                bottom: 35px;
-                height: 35px;
-                font-size: 30px;
-            }
-            
-            .agri-product {
-                font-size: 20px;
-            }
-            
-            .production-icon-symbol {
-                font-size: 20px;
+            .timer, .accuracy-info {
+                width: 100%;
             }
             
             .info-sidebar {
-                padding: 12px 8px;
                 gap: 12px;
-            }
-            
-            .answer-area {
-                padding: 12px;
-                max-height: 300px;
-            }
-            
-            .question-title {
-                font-size: 15px;
-            }
-            
-            .question-option {
-                padding: 8px 10px;
-                font-size: 13px;
-            }
-            
-            .submit-btn {
-                padding: 10px 0;
-                font-size: 14px;
-            }
-            
-            .stage-text, .timer-text, .accuracy-text {
-                font-size: 14px;
-            }
-            
-            .status-title, .status-desc {
-                font-size: 13px;
-            }
-        }
-
-        /* 横屏适配 */
-        @media (max-height: 500px) and (orientation: landscape) {
-            .game-wrapper {
-                height: 95vh;
-            }
-            
-            .production-line {
-                height: 80px;
-                margin: 5px 10px 0;
-            }
-            
-            .conveyor-belt {
-                height: 15px;
-                bottom: 30px;
-            }
-            
-            .production-node {
-                bottom: 30px;
-                height: 30px;
-                font-size: 25px;
-            }
-            
-            .agri-product {
-                font-size: 18px;
-            }
-            
-            .production-icon-symbol {
-                font-size: 18px;
-            }
-            
-            .bottom-panel {
-                padding: 5px 10px;
-                gap: 8px;
-            }
-            
-            .info-sidebar {
-                padding: 10px 8px;
-                gap: 10px;
-            }
-            
-            .answer-area {
-                padding: 10px;
-                max-height: 250px;
-            }
-            
-            .question-title {
-                font-size: 14px;
-                padding-bottom: 8px;
-            }
-            
-            .question-options {
-                gap: 8px;
-            }
-            
-            .question-option {
-                padding: 8px 10px;
-                font-size: 13px;
-            }
-            
-            .submit-btn {
-                padding: 8px 0;
-                font-size: 14px;
             }
         }
     </style>
@@ -984,95 +928,86 @@
         </audio>
     </div>
 
-    <div class="game-wrapper">
-        <!-- 缩放控制按钮 -->
-        <div class="zoom-controls">
-            <button class="zoom-btn" id="zoomInBtn">+</button>
-            <button class="zoom-btn" id="zoomOutBtn">-</button>
-            <button class="zoom-btn" id="resetZoomBtn">↺</button>
+    <div class="container">
+        <!-- 封面 -->
+        <div class="cover-container">
+            <div class="cover">
+                <div class="cover-image"></div>
+                <button class="cover-btn start-btn" id="startBtn"></button>
+                <button class="cover-btn help-btn" id="helpBtn"></button>
+            </div>
         </div>
         
-        <div class="game-container">
-            <!-- 封面 -->
-            <div class="cover-container">
-                <div class="cover">
-                    <div class="cover-image"></div>
-                    <button class="cover-btn start-btn" id="startBtn"></button>
-                    <button class="cover-btn help-btn" id="helpBtn"></button>
+        <!-- 游戏界面 -->
+        <div class="game-container" id="gameContainer">
+            <!-- 生产线场景 -->
+            <div class="production-line">
+                <!-- 传送带 -->
+                <div class="conveyor-belt"></div>
+                
+                <!-- 生产线节点 -->
+                <div class="production-node raw-materials">🌾</div> <!-- 原料区 -->
+                <div class="production-node processing-plant">🏭</div> <!-- 加工区 -->
+                
+                <!-- 生产线上的农产品 -->
+                <div class="agri-product raw-product" id="rawMaterial">🌾</div>
+                <div class="agri-product processing-product" id="processingProduct">🌾</div>
+                <div class="agri-product finished-product" id="finishedProduct">🍞</div>
+                
+                <!-- 生产线节点图标 -->
+                <div class="production-icon production-icon-1">
+                    <div class="production-icon-symbol">🌡️</div>
                 </div>
-            </div>
-            
-            <!-- 游戏界面 -->
-            <div class="game-screen" id="gameScreen">
-                <!-- 生产线场景 -->
-                <div class="production-line">
-                    <!-- 传送带 -->
-                    <div class="conveyor-belt"></div>
-                    
-                    <!-- 生产线节点 -->
-                    <div class="production-node raw-materials">🌾</div> <!-- 原料区 -->
-                    <div class="production-node processing-plant">🏭</div> <!-- 加工区 -->
-                    
-                    <!-- 生产线上的农产品 -->
-                    <div class="agri-product raw-product" id="rawMaterial">🌾</div>
-                    <div class="agri-product processing-product" id="processingProduct">🌾</div>
-                    <div class="agri-product finished-product" id="finishedProduct">🍞</div>
-                    
-                    <!-- 生产线节点图标 -->
-                    <div class="production-icon production-icon-1">
-                        <div class="production-icon-symbol">🌡️</div>
-                    </div>
-                    <div class="production-icon production-icon-2">
-                        <div class="production-icon-symbol">⚗️</div>
-                    </div>
-                    
-                    <!-- 生产线特效 -->
-                    <div class="production-effect effect-1" id="effect1">✨</div>
-                    <div class="production-effect effect-2" id="effect2">✨</div>
+                <div class="production-icon production-icon-2">
+                    <div class="production-icon-symbol">⚗️</div>
                 </div>
                 
-                <!-- 下方信息+答题区域 -->
-                <div class="bottom-panel">
-                    <!-- 左侧：阶段区域 -->
-                    <div class="info-sidebar">
-                        <div class="stage-info">
-                            <span class="stage-icon" id="sidebarStageIcon">🌱</span>
-                            <span class="stage-text" id="sidebarStageText">第1关：贮藏技术基础</span>
-                        </div>
-                        
-                        <div class="timer">
-                            <span class="timer-icon">⏱️</span>
-                            <span class="timer-text" id="sidebarTimer">00:00</span>
-                        </div>
-                        
-                        <div class="accuracy-info">
-                            <span class="accuracy-icon">🎯</span>
-                            <span class="accuracy-text" id="accuracyText">准确率：0%</span>
-                        </div>
-                        
-                        <div class="answer-status">
-                            <div class="status-title">答题进度</div>
-                            <div class="status-progress">
-                                <div class="progress-fill" id="statusProgress"></div>
-                            </div>
-                            <div class="status-desc" id="statusDesc">0/16 题（总分100分）</div>
-                        </div>
-                        
-                        <!-- 阶段区域底部装饰 -->
-                        <div class="sidebar-decoration">
-                            <div class="decor-item">🌾</div>
-                            <div class="decor-item">🌡️</div>
-                            <div class="decor-item">⚗️</div>
-                            <div class="decor-item">🍞</div>
-                        </div>
+                <!-- 生产线特效 -->
+                <div class="production-effect effect-1" id="effect1">✨</div>
+                <div class="production-effect effect-2" id="effect2">✨</div>
+            </div>
+            
+            <!-- 下方信息+答题区域 -->
+            <div class="bottom-panel">
+                <!-- 左侧：阶段区域 -->
+                <div class="info-sidebar">
+                    <div class="stage-info">
+                        <span class="stage-icon" id="sidebarStageIcon">🌱</span>
+                        <span class="stage-text" id="sidebarStageText">第1关：贮藏技术基础</span>
                     </div>
                     
-                    <!-- 右侧：答题区域 -->
-                    <div class="answer-area">
-                        <div class="question-title" id="questionTitle"></div>
-                        <div class="question-options" id="optionsContainer"></div>
-                        <button class="submit-btn" id="submitBtn" disabled>提交答案</button>
+                    <div class="timer">
+                        <span class="timer-icon">⏱️</span>
+                        <span class="timer-text" id="sidebarTimer">00:00</span>
                     </div>
+                    
+                    <div class="accuracy-info">
+                        <span class="accuracy-icon">🎯</span>
+                        <span class="accuracy-text" id="accuracyText">准确率：0%</span>
+                    </div>
+                    
+                    <div class="answer-status">
+                        <div class="status-title">答题进度</div>
+                        <div class="status-progress">
+                            <div class="progress-fill" id="statusProgress"></div>
+                        </div>
+                        <div class="status-desc" id="statusDesc">0/16 题（总分100分）</div>
+                    </div>
+                    
+                    <!-- 阶段区域底部装饰 -->
+                    <div class="sidebar-decoration">
+                        <div class="decor-item">🌾</div>
+                        <div class="decor-item">🌡️</div>
+                        <div class="decor-item">⚗️</div>
+                        <div class="decor-item">🍞</div>
+                    </div>
+                </div>
+                
+                <!-- 右侧：答题区域 -->
+                <div class="answer-area">
+                    <div class="question-title" id="questionTitle"></div>
+                    <div class="question-options" id="optionsContainer"></div>
+                    <button class="submit-btn" id="submitBtn" disabled>提交答案</button>
                 </div>
             </div>
         </div>
@@ -1219,7 +1154,7 @@
         const correctSound = document.getElementById('correctSound');
         const wrongSound = document.getElementById('wrongSound');
         const successSound = document.getElementById('successSound');
-        const slideSound = document.getElementById('slideSound');
+        const slideSound = document.getElementById('slideSound'); // 新增滑动音效
 
         // 设置音量
         bgMusic.volume = 0.7;
@@ -1228,7 +1163,7 @@
         correctSound.volume = 0.3;
         wrongSound.volume = 0.3;
         successSound.volume = 0.4;
-        slideSound.volume = 0.3;
+        slideSound.volume = 0.3; // 设置滑动音效音量
 
         // 自动播放背景音乐
         document.addEventListener('click', function playBackgroundMusic() {
@@ -1360,7 +1295,7 @@
                     ],
                     checkpoint: 1,
                     type: "single",
-                    scorePerQ: 4
+                    scorePerQ: 4 // 第一阶段每题4分
                 },
                 {
                     name: "加工技术应用",
@@ -1432,18 +1367,21 @@
                     ],
                     checkpoint: 2,
                     type: "single",
-                    scorePerQ: 10
+                    scorePerQ: 10 // 第二阶段每题10分
                 }
             ]
         };
 
-        // 生产线节点位置 - 改为百分比定位
-        const productionNodes = {
-            start: 10,
-            1: 35,
-            2: 65,
-            end: 90
-        };
+        // 生产线节点位置 - 响应式调整
+        function getProductionNodes() {
+            const gameWidth = document.querySelector('.game-container').offsetWidth;
+            return {
+                start: gameWidth * 0.09,
+                1: gameWidth * 0.35 - 20,
+                2: gameWidth * 0.65 - 20,
+                end: gameWidth - gameWidth * 0.18
+            };
+        }
 
         // 游戏状态
         let gameState = {
@@ -1458,13 +1396,13 @@
             elapsedTime: 0,
             selectedOptions: [],
             completedQuestions: [],
-            totalQuestions: 16
+            totalQuestions: 16 // 10+6题
         };
 
         // DOM 元素
         const startBtn = document.getElementById('startBtn');
         const helpBtn = document.getElementById('helpBtn');
-        const gameScreen = document.getElementById('gameScreen');
+        const gameContainer = document.getElementById('gameContainer');
         const submitBtn = document.getElementById('submitBtn');
         const questionTitle = document.getElementById('questionTitle');
         const optionsContainer = document.getElementById('optionsContainer');
@@ -1515,97 +1453,25 @@
         const closeAnswerConfirmBtn = document.getElementById('closeAnswerConfirmBtn');
         const answerExplanation = document.getElementById('answerExplanation');
 
-        // 缩放控制元素
-        const zoomInBtn = document.getElementById('zoomInBtn');
-        const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const resetZoomBtn = document.getElementById('resetZoomBtn');
-        const gameWrapper = document.querySelector('.game-wrapper');
-        const gameContainer = document.querySelector('.game-container');
-
-        // 缩放状态
-        let currentScale = 1;
-        const minScale = 0.5;
-        const maxScale = 2;
-        const scaleStep = 0.1;
-
-        // 初始化缩放控制
-        function initZoomControls() {
-            zoomInBtn.addEventListener('click', () => {
-                if (currentScale < maxScale) {
-                    currentScale += scaleStep;
-                    updateZoom();
-                }
-            });
-
-            zoomOutBtn.addEventListener('click', () => {
-                if (currentScale > minScale) {
-                    currentScale -= scaleStep;
-                    updateZoom();
-                }
-            });
-
-            resetZoomBtn.addEventListener('click', () => {
-                currentScale = 1;
-                updateZoom();
-            });
-
-            // 添加触摸缩放支持
-            let initialDistance = null;
-            
-            gameWrapper.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 2) {
-                    initialDistance = Math.hypot(
-                        e.touches[0].clientX - e.touches[1].clientX,
-                        e.touches[0].clientY - e.touches[1].clientY
-                    );
-                }
-            });
-
-            gameWrapper.addEventListener('touchmove', (e) => {
-                if (e.touches.length === 2 && initialDistance) {
-                    const currentDistance = Math.hypot(
-                        e.touches[0].clientX - e.touches[1].clientX,
-                        e.touches[0].clientY - e.touches[1].clientY
-                    );
-                    
-                    const scaleChange = currentDistance / initialDistance;
-                    const newScale = currentScale * scaleChange;
-                    
-                    if (newScale >= minScale && newScale <= maxScale) {
-                        currentScale = newScale;
-                        updateZoom();
-                    }
-                    
-                    initialDistance = currentDistance;
-                }
-            });
-
-            gameWrapper.addEventListener('touchend', () => {
-                initialDistance = null;
-            });
-        }
-
-        function updateZoom() {
-            gameContainer.style.transform = `scale(${currentScale})`;
-        }
-
         // 事件监听
         startBtn.addEventListener('click', () => {
             startSound.play();
             document.querySelector('.cover-container').style.display = 'none';
-            gameScreen.style.display = 'flex';
+            gameContainer.style.display = 'block';
             initGame();
         });
         
+        // 添加start按钮鼠标悬停音效
         startBtn.addEventListener('mouseenter', () => {
-            slideSound.currentTime = 0;
+            slideSound.currentTime = 0; // 重置音效
             slideSound.play().catch(e => {
                 console.log('滑动音效播放需要用户交互:', e);
             });
         });
 
+        // 新增：帮助按钮鼠标悬停音效
         helpBtn.addEventListener('mouseenter', () => {
-            slideSound.currentTime = 0;
+            slideSound.currentTime = 0; // 重置音效
             slideSound.play().catch(e => {
                 console.log('滑动音效播放需要用户交互:', e);
             });
@@ -1630,16 +1496,19 @@
         
         retryBtn.addEventListener('click', () => {
             errorModal.style.display = 'none';
+            // 第十题错误时，关闭错误弹窗后显示查看答案
             const isTenthQuestion = gameState.currentStage === 0 && gameState.currentQuestion === 9;
             if (isTenthQuestion) {
                 const question = gameData.stages[gameState.currentStage].questions[gameState.currentQuestion];
                 answerExplanation.textContent = question.explanation;
                 answerModal.style.display = 'flex';
             } else {
+                // 其他题错误，直接重新加载
                 loadQuestion();
             }
         });
         
+        // 第一阶段正确弹窗（含第十题）- 逻辑统一
         nextBtn.addEventListener('click', () => {
             correctModal.style.display = 'none';
             const currentStage = gameData.stages[gameState.currentStage];
@@ -1649,18 +1518,23 @@
             updateAnswerStatus();
             updateAccuracy();
             
+            // 推进题目索引
             gameState.currentQuestion++;
             
+            // 判断是否为第一阶段最后一题（第十题）
             if (gameState.currentQuestion >= currentStage.questions.length) {
+                // 进入进阶阶段
                 document.getElementById('advanceScore').textContent = gameState.score;
                 advanceModal.style.display = 'flex';
             } else {
+                // 加载下一题
                 loadQuestion();
                 processingProduct.style.opacity = 1;
-                processingProduct.style.left = `${productionNodes[1]}%`;
+                processingProduct.style.left = `${getProductionNodes()[1]}px`;
             }
         });
         
+        // 第二阶段正确弹窗（含最后一题）- 逻辑统一
         nextBtnStage2.addEventListener('click', () => {
             correctModalStage2.style.display = 'none';
             const currentStage = gameData.stages[gameState.currentStage];
@@ -1670,17 +1544,21 @@
             updateAnswerStatus();
             updateAccuracy();
             
+            // 推进题目索引
             gameState.currentQuestion++;
             
+            // 判断是否为第二阶段最后一题
             if (gameState.currentQuestion >= currentStage.questions.length) {
+                // 全部题目完成，显示通关弹窗
                 successSound.play();
                 finalScore.textContent = gameState.score;
                 successModal.style.display = 'flex';
             } else {
+                // 加载下一题
                 setTimeout(() => {
                     loadQuestion();
                     processingProduct.style.opacity = 1;
-                    processingProduct.style.left = `${productionNodes[2]}%`;
+                    processingProduct.style.left = `${getProductionNodes()[2]}px`;
                 }, 300);
             }
         });
@@ -1689,12 +1567,13 @@
             startSound.play();
             advanceModal.style.display = 'none';
             
+            // 从贮藏区移动到加工区的过渡动画
             processingProduct.style.opacity = 1;
-            processingProduct.style.left = `${productionNodes[1]}%`;
+            processingProduct.style.left = `${getProductionNodes()[1]}px`;
             processingProduct.style.transform = "scale(1)";
             
             setTimeout(() => {
-                processingProduct.style.left = `${productionNodes[2]}%`;
+                processingProduct.style.left = `${getProductionNodes()[2]}px`;
                 setTimeout(() => {
                     processingProduct.style.opacity = 0;
                     setTimeout(() => {
@@ -1714,17 +1593,20 @@
             resetGame();
             setTimeout(() => {
                 document.querySelector('.cover-container').style.display = 'flex';
-                gameScreen.style.display = 'none';
+                gameContainer.style.display = 'none';
             }, 300);
         });
 
+        // 新增：查看答案弹窗关闭事件
         closeAnswerBtn.addEventListener('click', () => {
             answerModal.style.display = 'none';
+            // 关闭解析后重新加载第十题
             loadQuestion();
         });
 
         closeAnswerConfirmBtn.addEventListener('click', () => {
             answerModal.style.display = 'none';
+            // 关闭解析后重新加载第十题
             loadQuestion();
         });
 
@@ -1759,7 +1641,7 @@
                     rawMaterial.style.opacity = 0;
                     setTimeout(() => {
                         processingProduct.style.opacity = 1;
-                        processingProduct.style.left = `${productionNodes[1]}%`;
+                        processingProduct.style.left = `${getProductionNodes()[1]}px`;
                         setTimeout(() => {
                             loadQuestion();
                         }, 800);
@@ -1768,11 +1650,12 @@
             }, 300);
         }
 
-        // 加载题目
+        // 加载题目 - 修改题号格式为"1. 2. 3. ..."
         function loadQuestion() {
             const stage = gameData.stages[gameState.currentStage];
             const question = stage.questions[gameState.currentQuestion];
             
+            // 修改题号格式为数字加句号
             questionTitle.textContent = `${gameState.currentQuestion + 1}. ${question.question}`;
             optionsContainer.innerHTML = '';
             gameState.selectedOptions = [];
@@ -1802,15 +1685,40 @@
                 
                 optionsContainer.appendChild(optionEl);
             });
+            
+            // 动态调整游戏界面高度
+            adjustGameContainerHeight();
         }
 
-        // 提交答案
+        // 动态调整游戏界面高度
+        function adjustGameContainerHeight() {
+            const gameContainer = document.getElementById('gameContainer');
+            const bottomPanel = document.querySelector('.bottom-panel');
+            
+            // 计算底部面板的实际高度
+            const bottomPanelHeight = bottomPanel.offsetHeight;
+            
+            // 计算生产线高度和间距
+            const productionLineHeight = document.querySelector('.production-line').offsetHeight;
+            const topMargin = parseInt(getComputedStyle(document.querySelector('.production-line')).top);
+            const bottomMargin = parseInt(getComputedStyle(document.querySelector('.bottom-panel')).bottom);
+            
+            // 计算所需总高度
+            const requiredHeight = topMargin + productionLineHeight + bottomPanelHeight + bottomMargin;
+            
+            // 设置游戏容器高度，至少为600px
+            gameContainer.style.height = Math.max(600, requiredHeight) + 'px';
+        }
+
+        // 提交答案 - 统一所有题目逻辑：答对显对应正确弹窗，答错显错误弹窗
         function submitAnswer() {
             const stage = gameData.stages[gameState.currentStage];
             const question = stage.questions[gameState.currentQuestion];
             const questionId = `${gameState.currentStage}-${gameState.currentQuestion}`;
             let isCorrect = false;
+            const isLastQuestionOfStage = gameState.currentQuestion === stage.questions.length - 1; // 当前阶段最后一题
             
+            // 判断答案正确性
             if (stage.type === 'single') {
                 isCorrect = gameState.selectedOptions[0] === question.answer;
             } else {
@@ -1819,9 +1727,10 @@
             
             gameState.totalAttempts++;
             
+            // 得分规则：答错不得分，答对按阶段分值加分
             if (isCorrect && !gameState.completedQuestions.includes(questionId)) {
                 gameState.correctAnswers++;
-                gameState.score += stage.scorePerQ;
+                gameState.score += stage.scorePerQ; // 按阶段分值加分
             }
             
             if (!isCorrect) {
@@ -1832,29 +1741,32 @@
                 gameState.completedQuestions.push(questionId);
             }
             
+            // 正确答案处理 - 按阶段显示对应正确弹窗（统一逻辑）
             if (isCorrect) {
                 correctSound.currentTime = 0;
                 correctSound.play();
                 
+                // 生产线特效
                 if (gameState.currentStage === 0) {
                     showProductionEffect(1);
                     setTimeout(() => {
-                        processingProduct.style.left = `${productionNodes[1]}%`;
+                        processingProduct.style.left = `${getProductionNodes()[1]}px`;
                         processingProduct.style.opacity = 0;
                     }, 500);
-                    correctModal.style.display = 'flex';
+                    correctModal.style.display = 'flex'; // 第一阶段统一用correctModal
                 } else {
                     showProductionEffect(2);
                     setTimeout(() => {
-                        processingProduct.style.left = `${productionNodes[2]}%`;
+                        processingProduct.style.left = `${getProductionNodes()[2]}px`;
                         processingProduct.style.opacity = 0;
                     }, 500);
-                    correctModalStage2.style.display = 'flex';
+                    correctModalStage2.style.display = 'flex'; // 第二阶段统一用correctModalStage2
                 }
                 
                 updateAnswerStatus();
                 updateAccuracy();
             } else {
+                // 错误答案处理 - 统一显示错误弹窗
                 wrongSound.currentTime = 0;
                 wrongSound.play();
                 errorText.textContent = question.explanation;
@@ -1880,9 +1792,11 @@
             updateSidebarInfo();
             activateProductionIcon(gameData.stages[gameState.currentStage].checkpoint);
             
+            // 更换产品图标
             processingProduct.innerHTML = "🍎";
+            // 显示农产品并定位到加工区
             processingProduct.style.opacity = 1;
-            processingProduct.style.left = `${productionNodes[2]}%`;
+            processingProduct.style.left = `${getProductionNodes()[2]}px`;
             loadQuestion();
         }
 
@@ -1926,6 +1840,26 @@
             document.querySelector(`.production-icon-${iconNumber}`).classList.add('active');
         }
 
+        // 生产成品动画（最后一题专用）
+        function produceFinishedProduct() {
+            processingProduct.style.opacity = 1;
+            processingProduct.style.left = `${getProductionNodes().end + 20}px`;
+            setTimeout(() => {
+                processingProduct.style.transform = `translate(${-70}px, -20px)`;
+                processingProduct.style.opacity = 0;
+                setTimeout(() => {
+                    finishedProduct.style.opacity = 1;
+                    finishedProduct.style.transform = "scale(1.2)";
+                    setTimeout(() => {
+                        finishedProduct.style.transform = "scale(1)";
+                        setTimeout(() => {
+                            finishedProduct.style.opacity = 0;
+                        }, 800);
+                    }, 300);
+                }, 600);
+            }, 500);
+        }
+
         // 重置产品
         function resetProducts() {
             [rawMaterial, processingProduct, finishedProduct].forEach(product => {
@@ -1934,16 +1868,17 @@
                 product.style.left = "";
             });
             
+            // 重置产品图标
             rawMaterial.innerHTML = "🌾";
             processingProduct.innerHTML = "🌾";
             finishedProduct.innerHTML = "🍞";
         }
 
-        // 显示结果
+        // 显示结果（分数按100分制计算）
         function showResults() {
             clearInterval(gameState.timerInterval);
             const accuracy = gameState.totalAttempts > 0 ? Math.round((gameState.correctAnswers / gameState.totalAttempts) * 100) : 0;
-            const scorePercent = (gameState.score / 100) * 100;
+            const scorePercent = (gameState.score / 100) * 100; // 总分100分
             
             correctCount.textContent = `答对: ${gameState.correctAnswers}题`;
             wrongCount.textContent = `答错: ${gameState.wrongAttempts}题`;
@@ -1967,9 +1902,6 @@
             optionsContainer.innerHTML = '';
             submitBtn.disabled = true;
         }
-
-        // 初始化缩放控制
-        initZoomControls();
     </script>
 </body>
 </html>
