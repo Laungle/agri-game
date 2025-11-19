@@ -5,6 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>农产品贮藏与加工技术闯关游戏</title>
     <style>
+        /* 适配小屏幕设备（手机/平板） */
+        @media (max-width: 768px) {
+          .cover, .game-container {
+            width: 100vw; /* 占满屏幕宽度 */
+            height: 100vh; /* 占满屏幕高度 */
+            border-radius: 0; /* 取消圆角（全屏显示） */
+          }
+          .production-line {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 120px; /* 缩小生产线高度 */
+          }
+          .bottom-panel {
+            flex-direction: column; /* 手机端上下排列（原左右） */
+            top: 140px; /* 适配缩小后的生产线 */
+            gap: 10px;
+            padding: 0 10px;
+          }
+          .info-sidebar, .answer-area {
+            width: 100%; /* 占满宽度 */
+          }
+          .question-title {
+            font-size: 16px; /* 缩小题目字体 */
+          }
+          .question-option {
+            font-size: 14px; /* 缩小选项字体 */
+            padding: 10px 12px;
+          }
+          /* 隐藏部分装饰元素，节省手机屏幕空间 */
+          .sidebar-decoration {
+            display: none;
+          }
+        }
+        
+        /* 适配超小屏幕手机（如iPhone SE） */
+        @media (max-width: 375px) {
+          .question-title {
+            font-size: 15px;
+          }
+          .question-option {
+            font-size: 13px;
+          }
+          .production-node {
+            font-size: 35px; /* 缩小生产线图标 */
+          }
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -1679,4 +1727,5 @@
         }
     </script>
 </body>
+
 </html>
