@@ -5,54 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>农产品贮藏与加工技术闯关游戏</title>
     <style>
-        /* 适配小屏幕设备（手机/平板） */
-        @media (max-width: 768px) {
-          .cover, .game-container {
-            width: 100vw; /* 占满屏幕宽度 */
-            height: 100vh; /* 占满屏幕高度 */
-            border-radius: 0; /* 取消圆角（全屏显示） */
-          }
-          .production-line {
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            height: 120px; /* 缩小生产线高度 */
-          }
-          .bottom-panel {
-            flex-direction: column; /* 手机端上下排列（原左右） */
-            top: 140px; /* 适配缩小后的生产线 */
-            gap: 10px;
-            padding: 0 10px;
-          }
-          .info-sidebar, .answer-area {
-            width: 100%; /* 占满宽度 */
-          }
-          .question-title {
-            font-size: 16px; /* 缩小题目字体 */
-          }
-          .question-option {
-            font-size: 14px; /* 缩小选项字体 */
-            padding: 10px 12px;
-          }
-          /* 隐藏部分装饰元素，节省手机屏幕空间 */
-          .sidebar-decoration {
-            display: none;
-          }
-        }
-        
-        /* 适配超小屏幕手机（如iPhone SE） */
-        @media (max-width: 375px) {
-          .question-title {
-            font-size: 15px;
-          }
-          .question-option {
-            font-size: 13px;
-          }
-          .production-node {
-            font-size: 35px; /* 缩小生产线图标 */
-          }
-        }
-        
         * {
             margin: 0;
             padding: 0;
@@ -73,23 +25,25 @@
             width: 100%;
             max-width: 766px;
             display: flex;
-            padding: 0;
             flex-direction: column;
             align-items: center;
         }
         
-        /* 封面样式 - 适配766x600图片 */
+        /* 封面样式 - 自适应大小 */
         .cover-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
+            padding: 10px;
         }
         
         .cover {
             position: relative;
-            width: 766px;
-            height: 600px;
+            width: 100%;
+            max-width: 766px;
+            height: auto;
+            aspect-ratio: 766/600;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
             overflow: hidden;
@@ -113,12 +67,14 @@
             z-index: 10;
         }
         
-        /* 帮助按钮 - 左上角提示按钮精准定位 */
+        /* 帮助按钮 - 自适应定位 */
         .help-btn {
-            top: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
+            top: 3%;
+            left: 3%;
+            width: 8%;
+            height: 8%;
+            max-width: 40px;
+            max-height: 40px;
             background-color: transparent;
             border-radius: 50%;
             display: flex;
@@ -134,14 +90,16 @@
             color: transparent;
         }
 
-        /* START NOW按钮 - 底部中间精准定位，适配原图片 */
+        /* START NOW按钮 - 自适应定位 */
         .start-btn {
             position: absolute; 
-            bottom: 34px; 
-            left: 51%; 
+            bottom: 6%; 
+            left: 50%; 
             transform: translateX(-50%);
-            width: 226px; 
-            height: 80px; 
+            width: 30%; 
+            max-width: 226px; 
+            height: 13%;
+            max-height: 80px;
             background-color: transparent;
         }
 
@@ -153,10 +111,12 @@
             transform: translateX(-50%) scale(1.05);
         }
 
-        /* 游戏界面样式 - 动态高度 */
+        /* 游戏界面样式 - 自适应高度 */
         .game-container {
-            width: 766px;
-            min-height: 100vh; /* 最小高度保持600px */
+            width: 100%;
+            max-width: 766px;
+            min-height: 600px; /* 最小高度保持600px */
+            height: auto;
             background-color: #f9f9f9;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
@@ -165,14 +125,13 @@
             overflow: hidden;
             background-image: 
                 url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234caf50' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            margin: 10px;
         }
         
-        /* 生产线场景 */
+        /* 生产线场景 - 自适应大小 */
         .production-line {
-            position: absolute;
-            top: 15px; /* 上移减少顶部留白 */
-            left: 20px;
-            right: 20px;
+            position: relative;
+            margin: 15px 20px 0;
             height: 160px; /* 减少高度 */
             background-color: rgba(255, 255, 255, 0.85);
             border-radius: 12px;
@@ -185,8 +144,8 @@
         .conveyor-belt {
             position: absolute;
             bottom: 50px; /* 上移 */
-            left: 120px;
-            right: 120px;
+            left: 15%;
+            right: 15%;
             height: 25px; /* 减少高度 */
             background-color: #d0d0d0;
             z-index: 20;
@@ -212,11 +171,11 @@
         }
         
         .raw-materials { /* 原料区 */
-            left: 40px;
+            left: 5%;
         }
         
         .processing-plant { /* 加工区 */
-            right: 40px;
+            right: 5%;
         }
         
         /* 生产线上的农产品 */
@@ -229,17 +188,17 @@
         }
         
         .raw-product {
-            left: 70px;
+            left: 10%;
             bottom: 70px; /* 上移 */
         }
         
         .processing-product {
-            left: 160px;
+            left: 40%;
             bottom: 60px; /* 上移 */
         }
         
         .finished-product {
-            right: 70px;
+            right: 10%;
             bottom: 70px; /* 上移 */
         }
         
@@ -301,20 +260,16 @@
         
         /* 下方信息+答题区域 - 动态调整 */
         .bottom-panel {
-            position: absolute;
-            top: 190px; /* 上移以利用空间 */
-            left: 0;
-            right: 0;
-            bottom: 15px; /* 减少底部留白 */
-            padding: 0 20px;
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            padding: 15px 20px;
+            gap: 15px;
             z-index: 5;
         }
         
         /* 左侧：阶段区域 */
         .info-sidebar {
-            width: 32%;
+            width: 100%;
             background-color: white;
             border-radius: 12px;
             padding: 18px 15px; /* 减少内边距 */
@@ -450,7 +405,7 @@
         
         /* 右侧：答题区域 - 取消滚动条，自适应高度 */
         .answer-area {
-            width: 68%;
+            width: 100%;
             background-color: white;
             border-radius: 12px;
             padding: 20px; 
@@ -496,6 +451,7 @@
             line-height: 1.5;
             word-wrap: break-word;
             overflow-wrap: break-word;
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
         }
         
         .option-checkbox {
@@ -543,6 +499,7 @@
             box-shadow: 0 3px 8px rgba(76, 175, 80, 0.2);
             margin-top: auto;
             flex-shrink: 0; /* 防止按钮被压缩 */
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
         }
         
         .submit-btn:disabled {
@@ -561,7 +518,7 @@
         /* 弹窗样式 - 优化宽高 */
         .modal {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -577,9 +534,9 @@
             background-color: white;
             padding: 20px; /* 减小内边距降低高度 */
             border-radius: 12px;
-            width: 60%; /* 增加宽度占比 */
-            max-width: 400px; /* 提高最大宽度 */
-            max-height: 50%; /* 降低最大高度 */
+            width: 90%; /* 增加宽度占比 */
+            max-width: 500px; /* 提高最大宽度 */
+            max-height: 80%; /* 降低最大高度 */
             overflow-y: auto;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
             position: relative;
@@ -638,6 +595,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
         }
         
         .close-btn:hover {
@@ -658,6 +616,7 @@
             margin: 0 auto;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
         }
         
         .confirm-btn:hover {
@@ -726,6 +685,309 @@
         .audio-container {
             display: none;
         }
+
+        /* 适配小屏幕设备（手机/平板） */
+        @media (min-width: 768px) {
+            .cover {
+                width: 766px;
+                height: 600px;
+            }
+            
+            .bottom-panel {
+                flex-direction: row;
+            }
+            
+            .info-sidebar {
+                width: 32%;
+            }
+            
+            .answer-area {
+                width: 68%;
+            }
+            
+            .production-line {
+                position: absolute;
+                top: 15px;
+                left: 20px;
+                right: 20px;
+            }
+            
+            .bottom-panel {
+                position: absolute;
+                top: 190px;
+                left: 0;
+                right: 0;
+                bottom: 15px;
+                padding: 0 20px;
+            }
+        }
+
+        /* 适配中屏幕设备（iPad） */
+        @media (max-width: 1024px) and (min-width: 768px) {
+            .container {
+                max-width: 90%;
+            }
+            
+            .game-container {
+                max-width: 100%;
+            }
+            
+            .question-title {
+                font-size: 18px;
+            }
+            
+            .question-option {
+                font-size: 16px;
+            }
+        }
+
+        /* 适配小屏幕设备（手机） */
+        @media (max-width: 767px) {
+            body {
+                padding: 5px 0;
+            }
+            
+            .cover {
+                border-radius: 8px;
+            }
+            
+            .game-container {
+                border-radius: 8px;
+                min-height: 500px;
+            }
+            
+            .production-line {
+                height: 120px;
+                margin: 10px 10px 0;
+            }
+            
+            .conveyor-belt {
+                height: 20px;
+                bottom: 40px;
+            }
+            
+            .production-node {
+                bottom: 40px;
+                height: 40px;
+                font-size: 35px;
+            }
+            
+            .agri-product {
+                font-size: 22px;
+            }
+            
+            .raw-product {
+                bottom: 55px;
+            }
+            
+            .processing-product {
+                bottom: 50px;
+            }
+            
+            .finished-product {
+                bottom: 55px;
+            }
+            
+            .production-icon {
+                bottom: 40px;
+            }
+            
+            .production-icon-symbol {
+                font-size: 22px;
+            }
+            
+            .production-effect {
+                font-size: 18px;
+            }
+            
+            .effect-1, .effect-2 {
+                top: 20px;
+            }
+            
+            .bottom-panel {
+                padding: 10px;
+                gap: 10px;
+            }
+            
+            .info-sidebar {
+                padding: 15px 10px;
+                gap: 15px;
+            }
+            
+            .answer-area {
+                padding: 15px;
+            }
+            
+            .question-title {
+                font-size: 16px;
+                padding-bottom: 10px;
+            }
+            
+            .question-options {
+                gap: 10px;
+            }
+            
+            .question-option {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            .submit-btn {
+                padding: 12px 0;
+                font-size: 16px;
+            }
+            
+            .modal-content {
+                padding: 15px;
+                width: 95%;
+            }
+            
+            .modal-title {
+                font-size: 20px;
+            }
+            
+            .modal-text {
+                font-size: 15px;
+            }
+            
+            .guide-title {
+                font-size: 16px;
+            }
+            
+            .confirm-btn {
+                padding: 10px 25px;
+                font-size: 15px;
+            }
+        }
+
+        /* 适配超小屏幕手机（如iPhone SE） */
+        @media (max-width: 375px) {
+            .production-line {
+                height: 100px;
+            }
+            
+            .conveyor-belt {
+                height: 15px;
+                bottom: 35px;
+            }
+            
+            .production-node {
+                bottom: 35px;
+                height: 35px;
+                font-size: 30px;
+            }
+            
+            .agri-product {
+                font-size: 20px;
+            }
+            
+            .production-icon-symbol {
+                font-size: 20px;
+            }
+            
+            .info-sidebar {
+                padding: 12px 8px;
+                gap: 12px;
+            }
+            
+            .answer-area {
+                padding: 12px;
+            }
+            
+            .question-title {
+                font-size: 15px;
+            }
+            
+            .question-option {
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+            
+            .submit-btn {
+                padding: 10px 0;
+                font-size: 14px;
+            }
+            
+            .stage-text, .timer-text, .accuracy-text {
+                font-size: 14px;
+            }
+            
+            .status-title, .status-desc {
+                font-size: 13px;
+            }
+        }
+
+        /* 横屏适配 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .cover-container {
+                padding: 5px;
+            }
+            
+            .cover {
+                max-height: 95vh;
+            }
+            
+            .game-container {
+                min-height: 95vh;
+            }
+            
+            .production-line {
+                height: 80px;
+                margin: 5px 10px 0;
+            }
+            
+            .conveyor-belt {
+                height: 15px;
+                bottom: 30px;
+            }
+            
+            .production-node {
+                bottom: 30px;
+                height: 30px;
+                font-size: 25px;
+            }
+            
+            .agri-product {
+                font-size: 18px;
+            }
+            
+            .production-icon-symbol {
+                font-size: 18px;
+            }
+            
+            .bottom-panel {
+                padding: 5px 10px;
+                gap: 8px;
+            }
+            
+            .info-sidebar {
+                padding: 10px 8px;
+                gap: 10px;
+            }
+            
+            .answer-area {
+                padding: 10px;
+            }
+            
+            .question-title {
+                font-size: 14px;
+                padding-bottom: 8px;
+            }
+            
+            .question-options {
+                gap: 8px;
+            }
+            
+            .question-option {
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+            
+            .submit-btn {
+                padding: 8px 0;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -734,25 +996,31 @@
         <!-- 背景音乐 - 循环播放 -->
         <audio id="bgMusic" loop>
             <source src="background.mp3" type="audio/mpeg">
+        </audio>
         <!-- 帮助弹窗相关音效 -->
         <audio id="helpSound">
             <source src="help.mp3" type="audio/mpeg">
+        </audio>
         <!-- 开始游戏音效 -->
         <audio id="startSound">
             <source src="start.mp3" type="audio/mpeg">
+        </audio>
         <!-- 答题正确音效 -->
         <audio id="correctSound">
             <source src="correct.mp3" type="audio/mpeg">
+        </audio>
         <!-- 答题错误音效 -->
         <audio id="wrongSound">
             <source src="wrong.mp3" type="audio/mpeg">
+        </audio>
         <!-- 过关音效 -->
         <audio id="successSound">
             <source src="success.mp3" type="audio/mpeg">
+        </audio>
         <!-- 滑动音效 -->
         <audio id="slideSound">
             <source src="slide.mp3" type="audio/mpeg">
-        
+        </audio>
     </div>
 
     <div class="container">
@@ -1199,12 +1467,12 @@
             ]
         };
 
-        // 生产线节点位置
+        // 生产线节点位置 - 改为百分比定位
         const productionNodes = {
-            start: 70,
-            1: 766 * 0.35 - 20,
-            2: 766 * 0.65 - 20,
-            end: 766 - 140
+            start: 10,
+            1: 35,
+            2: 65,
+            end: 90
         };
 
         // 游戏状态
@@ -1354,7 +1622,7 @@
                 // 加载下一题
                 loadQuestion();
                 processingProduct.style.opacity = 1;
-                processingProduct.style.left = `${productionNodes[1]}px`;
+                processingProduct.style.left = `${productionNodes[1]}%`;
             }
         });
         
@@ -1382,7 +1650,7 @@
                 setTimeout(() => {
                     loadQuestion();
                     processingProduct.style.opacity = 1;
-                    processingProduct.style.left = `${productionNodes[2]}px`;
+                    processingProduct.style.left = `${productionNodes[2]}%`;
                 }, 300);
             }
         });
@@ -1393,11 +1661,11 @@
             
             // 从贮藏区移动到加工区的过渡动画（提速：原300→100，1200→500，800→300）
             processingProduct.style.opacity = 1;
-            processingProduct.style.left = `${productionNodes[1]}px`;
+            processingProduct.style.left = `${productionNodes[1]}%`;
             processingProduct.style.transform = "scale(1)";
             
             setTimeout(() => {
-                processingProduct.style.left = `${productionNodes[2]}px`;
+                processingProduct.style.left = `${productionNodes[2]}%`;
                 setTimeout(() => {
                     processingProduct.style.opacity = 0;
                     setTimeout(() => {
@@ -1465,7 +1733,7 @@
                     rawMaterial.style.opacity = 0;
                     setTimeout(() => {
                         processingProduct.style.opacity = 1;
-                        processingProduct.style.left = `${productionNodes[1]}px`;
+                        processingProduct.style.left = `${productionNodes[1]}%`;
                         setTimeout(() => {
                             loadQuestion();
                         }, 800);
@@ -1516,6 +1784,9 @@
 
         // 动态调整游戏界面高度
         function adjustGameContainerHeight() {
+            // 移动端不需要调整高度，因为使用了弹性布局
+            if (window.innerWidth < 768) return;
+            
             const gameContainer = document.getElementById('gameContainer');
             const bottomPanel = document.querySelector('.bottom-panel');
             
@@ -1574,14 +1845,14 @@
                 if (gameState.currentStage === 0) {
                     showProductionEffect(1);
                     setTimeout(() => {
-                        processingProduct.style.left = `${productionNodes[1]}px`;
+                        processingProduct.style.left = `${productionNodes[1]}%`;
                         processingProduct.style.opacity = 0;
                     }, 500);
                     correctModal.style.display = 'flex'; // 第一阶段统一用correctModal
                 } else {
                     showProductionEffect(2);
                     setTimeout(() => {
-                        processingProduct.style.left = `${productionNodes[2]}px`;
+                        processingProduct.style.left = `${productionNodes[2]}%`;
                         processingProduct.style.opacity = 0;
                     }, 500);
                     correctModalStage2.style.display = 'flex'; // 第二阶段统一用correctModalStage2
@@ -1620,7 +1891,7 @@
             processingProduct.innerHTML = "🍎";
             // 显示农产品并定位到加工区
             processingProduct.style.opacity = 1;
-            processingProduct.style.left = `${productionNodes[2]}px`;
+            processingProduct.style.left = `${productionNodes[2]}%`;
             loadQuestion();
         }
 
@@ -1667,7 +1938,7 @@
         // 生产成品动画（最后一题专用）
         function produceFinishedProduct() {
             processingProduct.style.opacity = 1;
-            processingProduct.style.left = `${productionNodes.end + 20}px`;
+            processingProduct.style.left = `${productionNodes.end + 5}%`;
             setTimeout(() => {
                 processingProduct.style.transform = `translate(${-70}px, -20px)`;
                 processingProduct.style.opacity = 0;
@@ -1726,8 +1997,9 @@
             optionsContainer.innerHTML = '';
             submitBtn.disabled = true;
         }
+
+        // 窗口大小变化时调整布局
+        window.addEventListener('resize', adjustGameContainerHeight);
     </script>
 </body>
-
 </html>
-
