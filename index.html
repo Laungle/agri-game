@@ -2,10 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>农产品贮藏与加工技术闯关游戏</title>
     <style>
-        /* 全局样式调整 */
         * {
             margin: 0;
             padding: 0;
@@ -17,42 +16,48 @@
             background-color: #f5f5f5;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
-            padding: 10px 0;
-            overflow-x: hidden;
+            overflow: hidden;
+            padding: 10px;
         }
         
-        /* 可拖动容器样式 */
-        .draggable-container {
+        .game-wrapper {
             width: 100%;
-            max-width: 766px;
-            overflow: auto;
+            max-width: 1000px;
+            height: 100%;
             position: relative;
+            overflow: hidden;
             touch-action: pan-x pan-y;
         }
         
-        /* 游戏内容容器 */
-        .content-wrapper {
-            width: 766px;
-            min-height: 600px;
+        .game-container {
+            width: 100%;
+            height: 100%;
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
             position: relative;
+            overflow: hidden;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234caf50' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            transform-origin: center;
         }
         
-        /* 封面样式 */
+        /* 封面样式 - 自适应 */
         .cover-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
+            height: 100%;
         }
         
         .cover {
             position: relative;
-            width: 766px;
-            height: 600px;
+            width: 100%;
+            height: 100%;
             border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
             overflow: hidden;
             background-color: #fff;
         }
@@ -75,10 +80,12 @@
         }
         
         .help-btn {
-            top: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
+            top: 5%;
+            left: 5%;
+            width: 8%;
+            height: 8%;
+            max-width: 40px;
+            max-height: 40px;
             background-color: transparent;
             border-radius: 50%;
             display: flex;
@@ -96,11 +103,13 @@
 
         .start-btn {
             position: absolute; 
-            bottom: 34px; 
-            left: 51%; 
+            bottom: 6%; 
+            left: 50%; 
             transform: translateX(-50%);
-            width: 226px; 
-            height: 80px; 
+            width: 30%; 
+            max-width: 226px; 
+            height: 13%;
+            max-height: 80px;
             background-color: transparent;
         }
 
@@ -113,38 +122,33 @@
         }
 
         /* 游戏界面样式 */
-        .game-container {
-            width: 766px;
-            min-height: 600px;
-            background-color: #f9f9f9;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        .game-screen {
+            width: 100%;
+            height: 100%;
             display: none;
+            flex-direction: column;
             position: relative;
             overflow: hidden;
-            background-image: 
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234caf50' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         
-        /* 生产线场景 */
+        /* 生产线场景 - 自适应 */
         .production-line {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            right: 20px;
+            flex-shrink: 0;
+            margin: 15px 20px 0;
             height: 160px;
             background-color: rgba(255, 255, 255, 0.85);
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             overflow: hidden;
+            position: relative;
             z-index: 10;
         }
         
         .conveyor-belt {
             position: absolute;
             bottom: 50px;
-            left: 120px;
-            right: 120px;
+            left: 15%;
+            right: 15%;
             height: 25px;
             background-color: #d0d0d0;
             z-index: 20;
@@ -169,11 +173,11 @@
         }
         
         .raw-materials {
-            left: 40px;
+            left: 5%;
         }
         
         .processing-plant {
-            right: 40px;
+            right: 5%;
         }
         
         .agri-product {
@@ -185,17 +189,17 @@
         }
         
         .raw-product {
-            left: 70px;
+            left: 10%;
             bottom: 70px;
         }
         
         .processing-product {
-            left: 160px;
+            left: 40%;
             bottom: 60px;
         }
         
         .finished-product {
-            right: 70px;
+            right: 10%;
             bottom: 70px;
         }
         
@@ -253,21 +257,19 @@
             left: 65%;
         }
         
-        /* 下方信息+答题区域 */
+        /* 下方信息+答题区域 - 自适应 */
         .bottom-panel {
-            position: absolute;
-            top: 190px;
-            left: 0;
-            right: 0;
-            bottom: 15px;
-            padding: 0 20px;
+            flex: 1;
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            padding: 15px 20px;
+            gap: 15px;
+            overflow: auto;
             z-index: 5;
         }
         
         .info-sidebar {
-            width: 32%;
+            width: 100%;
             background-color: white;
             border-radius: 12px;
             padding: 18px 15px;
@@ -297,7 +299,7 @@
             color: #4CAF50;
         }
         
-        .accuracy-info {
+        .accuracy-info, .stage-info, .timer {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -307,56 +309,13 @@
             z-index: 2;
         }
         
-        .accuracy-icon {
+        .accuracy-icon, .stage-icon, .timer-icon {
             font-size: 18px;
             color: #4CAF50;
         }
         
-        .accuracy-text {
+        .accuracy-text, .stage-text, .timer-text {
             font-size: 14px;
-            font-weight: 500;
-            color: #333;
-        }
-        
-        .stage-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #f0f0f0;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .stage-icon {
-            font-size: 22px;
-            color: #8BC34A;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .stage-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .timer {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #f0f0f0;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .timer-icon {
-            font-size: 20px;
-            color: #4CAF50;
-        }
-        
-        .timer-text {
-            font-size: 15px;
             font-weight: 500;
             color: #333;
         }
@@ -397,7 +356,7 @@
         }
         
         .answer-area {
-            width: 68%;
+            width: 100%;
             background-color: white;
             border-radius: 12px;
             padding: 20px; 
@@ -443,6 +402,7 @@
             line-height: 1.5;
             word-wrap: break-word;
             overflow-wrap: break-word;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .option-checkbox {
@@ -490,6 +450,7 @@
             box-shadow: 0 3px 8px rgba(76, 175, 80, 0.2);
             margin-top: auto;
             flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .submit-btn:disabled {
@@ -508,7 +469,7 @@
         /* 弹窗样式 */
         .modal {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -524,9 +485,9 @@
             background-color: white;
             padding: 20px;
             border-radius: 12px;
-            width: 60%;
-            max-width: 400px;
-            max-height: 50%;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80%;
             overflow-y: auto;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
             position: relative;
@@ -584,6 +545,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .close-btn:hover {
@@ -604,6 +566,7 @@
             margin: 0 auto;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            -webkit-tap-highlight-color: transparent;
         }
         
         .confirm-btn:hover {
@@ -666,148 +629,351 @@
             transition: width 0.5s ease;
         }
         
+        /* 隐藏音频元素 */
         .audio-container {
             display: none;
         }
 
-        /* 响应式设计 - 平板设备 */
-        @media (max-width: 800px) {
-            .draggable-container {
-                width: 100%;
-                padding: 0;
-            }
-            
-            .cover, .game-container, .content-wrapper {
-                width: 766px;
-                max-width: none;
-            }
-            
-            .question-title {
-                font-size: 16px;
-            }
-            
-            .question-option {
-                font-size: 14px;
-                padding: 10px 12px;
-            }
-            
-            .modal-content {
-                width: 80%;
-                max-height: 60%;
-            }
+        /* 缩放控制按钮 */
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .zoom-btn:hover {
+            background-color: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
         }
 
-        /* 手机设备 */
-        @media (max-width: 480px) {
-            .production-line {
-                height: 120px;
-            }
-            
-            .production-node {
-                font-size: 35px;
-            }
-            
-            .production-icon-symbol {
-                font-size: 24px;
+        /* 适配中屏幕设备（iPad） */
+        @media (min-width: 768px) {
+            .game-wrapper {
+                height: 90vh;
+                max-height: 800px;
             }
             
             .bottom-panel {
-                flex-direction: column;
-                top: 140px;
-                gap: 10px;
-                padding: 0 10px;
-            }
-            
-            .info-sidebar, .answer-area {
-                width: 100%;
+                flex-direction: row;
             }
             
             .info-sidebar {
-                padding: 12px 10px;
+                width: 32%;
+            }
+            
+            .answer-area {
+                width: 68%;
+            }
+        }
+
+        /* 适配小屏幕设备（手机） */
+        @media (max-width: 767px) {
+            body {
+                padding: 5px;
+            }
+            
+            .game-wrapper {
+                height: 95vh;
+            }
+            
+            .production-line {
+                height: 120px;
+                margin: 10px 10px 0;
+            }
+            
+            .conveyor-belt {
+                height: 20px;
+                bottom: 40px;
+            }
+            
+            .production-node {
+                bottom: 40px;
+                height: 40px;
+                font-size: 35px;
+            }
+            
+            .agri-product {
+                font-size: 22px;
+            }
+            
+            .raw-product {
+                bottom: 55px;
+            }
+            
+            .processing-product {
+                bottom: 50px;
+            }
+            
+            .finished-product {
+                bottom: 55px;
+            }
+            
+            .production-icon {
+                bottom: 40px;
+            }
+            
+            .production-icon-symbol {
+                font-size: 22px;
+            }
+            
+            .production-effect {
+                font-size: 18px;
+            }
+            
+            .effect-1, .effect-2 {
+                top: 20px;
+            }
+            
+            .bottom-panel {
+                padding: 10px;
                 gap: 10px;
+            }
+            
+            .info-sidebar {
+                padding: 15px 10px;
+                gap: 15px;
             }
             
             .answer-area {
                 padding: 15px;
-                gap: 10px;
             }
             
             .question-title {
-                font-size: 15px;
+                font-size: 16px;
                 padding-bottom: 10px;
+            }
+            
+            .question-options {
+                gap: 10px;
             }
             
             .question-option {
-                font-size: 13px;
-                padding: 8px 10px;
+                padding: 10px 12px;
+                font-size: 14px;
             }
             
-            .modal {
-                padding-top: 40px;
+            .submit-btn {
+                padding: 12px 0;
+                font-size: 16px;
             }
             
             .modal-content {
-                width: 90%;
-                max-height: 70%;
                 padding: 15px;
+                width: 95%;
             }
             
             .modal-title {
-                font-size: 18px;
-                margin-bottom: 15px;
-                padding-bottom: 10px;
+                font-size: 20px;
             }
             
             .modal-text {
-                font-size: 14px;
-                margin-bottom: 15px;
+                font-size: 15px;
             }
             
             .guide-title {
                 font-size: 16px;
-                margin-bottom: 8px;
             }
             
             .confirm-btn {
                 padding: 10px 25px;
+                font-size: 15px;
+            }
+            
+            .zoom-controls {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .zoom-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+        }
+
+        /* 适配超小屏幕手机 */
+        @media (max-width: 375px) {
+            .production-line {
+                height: 100px;
+            }
+            
+            .conveyor-belt {
+                height: 15px;
+                bottom: 35px;
+            }
+            
+            .production-node {
+                bottom: 35px;
+                height: 35px;
+                font-size: 30px;
+            }
+            
+            .agri-product {
+                font-size: 20px;
+            }
+            
+            .production-icon-symbol {
+                font-size: 20px;
+            }
+            
+            .info-sidebar {
+                padding: 12px 8px;
+                gap: 12px;
+            }
+            
+            .answer-area {
+                padding: 12px;
+            }
+            
+            .question-title {
+                font-size: 15px;
+            }
+            
+            .question-option {
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+            
+            .submit-btn {
+                padding: 10px 0;
                 font-size: 14px;
             }
             
-            .sidebar-decoration {
-                display: none;
+            .stage-text, .timer-text, .accuracy-text {
+                font-size: 14px;
+            }
+            
+            .status-title, .status-desc {
+                font-size: 13px;
+            }
+        }
+
+        /* 横屏适配 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .game-wrapper {
+                height: 95vh;
+            }
+            
+            .production-line {
+                height: 80px;
+                margin: 5px 10px 0;
+            }
+            
+            .conveyor-belt {
+                height: 15px;
+                bottom: 30px;
+            }
+            
+            .production-node {
+                bottom: 30px;
+                height: 30px;
+                font-size: 25px;
+            }
+            
+            .agri-product {
+                font-size: 18px;
+            }
+            
+            .production-icon-symbol {
+                font-size: 18px;
+            }
+            
+            .bottom-panel {
+                padding: 5px 10px;
+                gap: 8px;
+            }
+            
+            .info-sidebar {
+                padding: 10px 8px;
+                gap: 10px;
+            }
+            
+            .answer-area {
+                padding: 10px;
+            }
+            
+            .question-title {
+                font-size: 14px;
+                padding-bottom: 8px;
+            }
+            
+            .question-options {
+                gap: 8px;
+            }
+            
+            .question-option {
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+            
+            .submit-btn {
+                padding: 8px 0;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 可拖动容器 -->
-    <div class="draggable-container" id="draggableContainer">
-        <div class="content-wrapper">
-            <!-- 音频元素容器 -->
-            <div class="audio-container">
-                <audio id="bgMusic" loop>
-                    <source src="background.mp3" type="audio/mpeg">
-                </audio>
-                <audio id="helpSound">
-                    <source src="help.mp3" type="audio/mpeg">
-                </audio>
-                <audio id="startSound">
-                    <source src="start.mp3" type="audio/mpeg">
-                </audio>
-                <audio id="correctSound">
-                    <source src="correct.mp3" type="audio/mpeg">
-                </audio>
-                <audio id="wrongSound">
-                    <source src="wrong.mp3" type="audio/mpeg">
-                </audio>
-                <audio id="successSound">
-                    <source src="success.mp3" type="audio/mpeg">
-                </audio>
-                <audio id="slideSound">
-                    <source src="slide.mp3" type="audio/mpeg">
-                </audio>
-            </div>
+    <!-- 音频元素容器 -->
+    <div class="audio-container">
+        <!-- 背景音乐 - 循环播放 -->
+        <audio id="bgMusic" loop>
+            <source src="background.mp3" type="audio/mpeg">
+        </audio>
+        <!-- 帮助弹窗相关音效 -->
+        <audio id="helpSound">
+            <source src="help.mp3" type="audio/mpeg">
+        </audio>
+        <!-- 开始游戏音效 -->
+        <audio id="startSound">
+            <source src="start.mp3" type="audio/mpeg">
+        </audio>
+        <!-- 答题正确音效 -->
+        <audio id="correctSound">
+            <source src="correct.mp3" type="audio/mpeg">
+        </audio>
+        <!-- 答题错误音效 -->
+        <audio id="wrongSound">
+            <source src="wrong.mp3" type="audio/mpeg">
+        </audio>
+        <!-- 过关音效 -->
+        <audio id="successSound">
+            <source src="success.mp3" type="audio/mpeg">
+        </audio>
+        <!-- 滑动音效 -->
+        <audio id="slideSound">
+            <source src="slide.mp3" type="audio/mpeg">
+        </audio>
+    </div>
 
+    <div class="game-wrapper">
+        <!-- 缩放控制按钮 -->
+        <div class="zoom-controls">
+            <button class="zoom-btn" id="zoomInBtn">+</button>
+            <button class="zoom-btn" id="zoomOutBtn">-</button>
+            <button class="zoom-btn" id="resetZoomBtn">↺</button>
+        </div>
+        
+        <div class="game-container">
             <!-- 封面 -->
             <div class="cover-container">
                 <div class="cover">
@@ -818,18 +984,22 @@
             </div>
             
             <!-- 游戏界面 -->
-            <div class="game-container" id="gameContainer">
+            <div class="game-screen" id="gameScreen">
                 <!-- 生产线场景 -->
                 <div class="production-line">
+                    <!-- 传送带 -->
                     <div class="conveyor-belt"></div>
                     
-                    <div class="production-node raw-materials">🌾</div>
-                    <div class="production-node processing-plant">🏭</div>
+                    <!-- 生产线节点 -->
+                    <div class="production-node raw-materials">🌾</div> <!-- 原料区 -->
+                    <div class="production-node processing-plant">🏭</div> <!-- 加工区 -->
                     
+                    <!-- 生产线上的农产品 -->
                     <div class="agri-product raw-product" id="rawMaterial">🌾</div>
                     <div class="agri-product processing-product" id="processingProduct">🌾</div>
                     <div class="agri-product finished-product" id="finishedProduct">🍞</div>
                     
+                    <!-- 生产线节点图标 -->
                     <div class="production-icon production-icon-1">
                         <div class="production-icon-symbol">🌡️</div>
                     </div>
@@ -837,12 +1007,14 @@
                         <div class="production-icon-symbol">⚗️</div>
                     </div>
                     
+                    <!-- 生产线特效 -->
                     <div class="production-effect effect-1" id="effect1">✨</div>
                     <div class="production-effect effect-2" id="effect2">✨</div>
                 </div>
                 
                 <!-- 下方信息+答题区域 -->
                 <div class="bottom-panel">
+                    <!-- 左侧：阶段区域 -->
                     <div class="info-sidebar">
                         <div class="stage-info">
                             <span class="stage-icon" id="sidebarStageIcon">🌱</span>
@@ -867,6 +1039,7 @@
                             <div class="status-desc" id="statusDesc">0/16 题（总分100分）</div>
                         </div>
                         
+                        <!-- 阶段区域底部装饰 -->
                         <div class="sidebar-decoration">
                             <div class="decor-item">🌾</div>
                             <div class="decor-item">🌡️</div>
@@ -875,6 +1048,7 @@
                         </div>
                     </div>
                     
+                    <!-- 右侧：答题区域 -->
                     <div class="answer-area">
                         <div class="question-title" id="questionTitle"></div>
                         <div class="question-options" id="optionsContainer"></div>
@@ -954,7 +1128,7 @@
         </div>
     </div>
     
-    <!-- 进阶提示弹窗 -->
+    <!-- 进阶提示弹窗 - 美化版本 -->
     <div class="modal" id="advanceModal">
         <div class="modal-content">
             <h2 class="modal-title">🎉 进阶挑战开启！</h2>
@@ -1008,7 +1182,7 @@
         </div>
     </div>
 
-    <!-- 第十题查看答案弹窗 -->
+    <!-- 新增：第十题查看答案弹窗 -->
     <div class="modal" id="answerModal">
         <div class="modal-content">
             <button class="close-btn" id="closeAnswerBtn">&times;</button>
@@ -1019,71 +1193,7 @@
     </div>
 
     <script>
-        // 拖动功能实现
-        const draggableContainer = document.getElementById('draggableContainer');
-        let isDragging = false;
-        let startX, startY, scrollLeft, scrollTop;
-
-        // 鼠标/触摸事件处理
-        draggableContainer.addEventListener('mousedown', startDrag);
-        draggableContainer.addEventListener('touchstart', startDrag, { passive: true });
-        
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('touchmove', drag, { passive: false });
-        
-        document.addEventListener('mouseup', endDrag);
-        document.addEventListener('touchend', endDrag);
-
-        function startDrag(e) {
-            isDragging = true;
-            
-            // 鼠标事件
-            if (e.type === 'mousedown') {
-                startX = e.pageX - draggableContainer.offsetLeft;
-                startY = e.pageY - draggableContainer.offsetTop;
-            } 
-            // 触摸事件
-            else if (e.type === 'touchstart') {
-                startX = e.touches[0].pageX - draggableContainer.offsetLeft;
-                startY = e.touches[0].pageY - draggableContainer.offsetTop;
-            }
-            
-            scrollLeft = draggableContainer.scrollLeft;
-            scrollTop = draggableContainer.scrollTop;
-            
-            draggableContainer.style.cursor = 'grabbing';
-        }
-
-        function drag(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            
-            let x, y;
-            
-            // 鼠标事件
-            if (e.type === 'mousemove') {
-                x = e.pageX - draggableContainer.offsetLeft;
-                y = e.pageY - draggableContainer.offsetTop;
-            } 
-            // 触摸事件
-            else if (e.type === 'touchmove') {
-                x = e.touches[0].pageX - draggableContainer.offsetLeft;
-                y = e.touches[0].pageY - draggableContainer.offsetTop;
-            }
-            
-            const walkX = (x - startX) * 1.2; // 水平拖动距离
-            const walkY = (y - startY) * 1.2; // 垂直拖动距离
-            
-            draggableContainer.scrollLeft = scrollLeft - walkX;
-            draggableContainer.scrollTop = scrollTop - walkY;
-        }
-
-        function endDrag() {
-            isDragging = false;
-            draggableContainer.style.cursor = 'grab';
-        }
-
-        // 音频元素处理
+        // 获取音频元素并设置音量
         const bgMusic = document.getElementById('bgMusic');
         const helpSound = document.getElementById('helpSound');
         const startSound = document.getElementById('startSound');
@@ -1111,7 +1221,7 @@
             document.removeEventListener('click', playBackgroundMusic);
         }, { once: true });
 
-        // 游戏数据
+        // 游戏数据 - 农产品贮藏与加工技术题目
         const gameData = {
             stages: [
                 {
@@ -1308,12 +1418,12 @@
             ]
         };
 
-        // 生产线节点位置
+        // 生产线节点位置 - 改为百分比定位
         const productionNodes = {
-            start: 70,
-            1: 766 * 0.35 - 20,
-            2: 766 * 0.65 - 20,
-            end: 766 - 140
+            start: 10,
+            1: 35,
+            2: 65,
+            end: 90
         };
 
         // 游戏状态
@@ -1335,7 +1445,7 @@
         // DOM 元素
         const startBtn = document.getElementById('startBtn');
         const helpBtn = document.getElementById('helpBtn');
-        const gameContainer = document.getElementById('gameContainer');
+        const gameScreen = document.getElementById('gameScreen');
         const submitBtn = document.getElementById('submitBtn');
         const questionTitle = document.getElementById('questionTitle');
         const optionsContainer = document.getElementById('optionsContainer');
@@ -1380,17 +1490,91 @@
         const scoreProgress = document.getElementById('scoreProgress');
         const restartBtn = document.getElementById('restartBtn');
 
-        // 查看答案弹窗元素
+        // 新增：查看答案弹窗元素
         const answerModal = document.getElementById('answerModal');
         const closeAnswerBtn = document.getElementById('closeAnswerBtn');
         const closeAnswerConfirmBtn = document.getElementById('closeAnswerConfirmBtn');
         const answerExplanation = document.getElementById('answerExplanation');
 
+        // 缩放控制元素
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const resetZoomBtn = document.getElementById('resetZoomBtn');
+        const gameWrapper = document.querySelector('.game-wrapper');
+        const gameContainer = document.querySelector('.game-container');
+
+        // 缩放状态
+        let currentScale = 1;
+        const minScale = 0.5;
+        const maxScale = 2;
+        const scaleStep = 0.1;
+
+        // 初始化缩放控制
+        function initZoomControls() {
+            zoomInBtn.addEventListener('click', () => {
+                if (currentScale < maxScale) {
+                    currentScale += scaleStep;
+                    updateZoom();
+                }
+            });
+
+            zoomOutBtn.addEventListener('click', () => {
+                if (currentScale > minScale) {
+                    currentScale -= scaleStep;
+                    updateZoom();
+                }
+            });
+
+            resetZoomBtn.addEventListener('click', () => {
+                currentScale = 1;
+                updateZoom();
+            });
+
+            // 添加触摸缩放支持
+            let initialDistance = null;
+            
+            gameWrapper.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    initialDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                }
+            });
+
+            gameWrapper.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2 && initialDistance) {
+                    const currentDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    
+                    const scaleChange = currentDistance / initialDistance;
+                    const newScale = currentScale * scaleChange;
+                    
+                    if (newScale >= minScale && newScale <= maxScale) {
+                        currentScale = newScale;
+                        updateZoom();
+                    }
+                    
+                    initialDistance = currentDistance;
+                }
+            });
+
+            gameWrapper.addEventListener('touchend', () => {
+                initialDistance = null;
+            });
+        }
+
+        function updateZoom() {
+            gameContainer.style.transform = `scale(${currentScale})`;
+        }
+
         // 事件监听
         startBtn.addEventListener('click', () => {
             startSound.play();
             document.querySelector('.cover-container').style.display = 'none';
-            gameContainer.style.display = 'block';
+            gameScreen.style.display = 'flex';
             initGame();
         });
         
@@ -1454,7 +1638,7 @@
             } else {
                 loadQuestion();
                 processingProduct.style.opacity = 1;
-                processingProduct.style.left = `${productionNodes[1]}px`;
+                processingProduct.style.left = `${productionNodes[1]}%`;
             }
         });
         
@@ -1477,7 +1661,7 @@
                 setTimeout(() => {
                     loadQuestion();
                     processingProduct.style.opacity = 1;
-                    processingProduct.style.left = `${productionNodes[2]}px`;
+                    processingProduct.style.left = `${productionNodes[2]}%`;
                 }, 300);
             }
         });
@@ -1487,11 +1671,11 @@
             advanceModal.style.display = 'none';
             
             processingProduct.style.opacity = 1;
-            processingProduct.style.left = `${productionNodes[1]}px`;
+            processingProduct.style.left = `${productionNodes[1]}%`;
             processingProduct.style.transform = "scale(1)";
             
             setTimeout(() => {
-                processingProduct.style.left = `${productionNodes[2]}px`;
+                processingProduct.style.left = `${productionNodes[2]}%`;
                 setTimeout(() => {
                     processingProduct.style.opacity = 0;
                     setTimeout(() => {
@@ -1511,7 +1695,7 @@
             resetGame();
             setTimeout(() => {
                 document.querySelector('.cover-container').style.display = 'flex';
-                gameContainer.style.display = 'none';
+                gameScreen.style.display = 'none';
             }, 300);
         });
 
@@ -1556,7 +1740,7 @@
                     rawMaterial.style.opacity = 0;
                     setTimeout(() => {
                         processingProduct.style.opacity = 1;
-                        processingProduct.style.left = `${productionNodes[1]}px`;
+                        processingProduct.style.left = `${productionNodes[1]}%`;
                         setTimeout(() => {
                             loadQuestion();
                         }, 800);
@@ -1599,22 +1783,6 @@
                 
                 optionsContainer.appendChild(optionEl);
             });
-            
-            adjustGameContainerHeight();
-        }
-
-        // 动态调整游戏界面高度
-        function adjustGameContainerHeight() {
-            const gameContainer = document.getElementById('gameContainer');
-            const bottomPanel = document.querySelector('.bottom-panel');
-            
-            const bottomPanelHeight = bottomPanel.offsetHeight;
-            const productionLineHeight = 160;
-            const topMargin = 15;
-            const bottomMargin = 15;
-            
-            const requiredHeight = topMargin + productionLineHeight + bottomPanelHeight + bottomMargin;
-            gameContainer.style.height = Math.max(600, requiredHeight) + 'px';
         }
 
         // 提交答案
@@ -1652,14 +1820,14 @@
                 if (gameState.currentStage === 0) {
                     showProductionEffect(1);
                     setTimeout(() => {
-                        processingProduct.style.left = `${productionNodes[1]}px`;
+                        processingProduct.style.left = `${productionNodes[1]}%`;
                         processingProduct.style.opacity = 0;
                     }, 500);
                     correctModal.style.display = 'flex';
                 } else {
                     showProductionEffect(2);
                     setTimeout(() => {
-                        processingProduct.style.left = `${productionNodes[2]}px`;
+                        processingProduct.style.left = `${productionNodes[2]}%`;
                         processingProduct.style.opacity = 0;
                     }, 500);
                     correctModalStage2.style.display = 'flex';
@@ -1695,7 +1863,7 @@
             
             processingProduct.innerHTML = "🍎";
             processingProduct.style.opacity = 1;
-            processingProduct.style.left = `${productionNodes[2]}px`;
+            processingProduct.style.left = `${productionNodes[2]}%`;
             loadQuestion();
         }
 
@@ -1739,26 +1907,6 @@
             document.querySelector(`.production-icon-${iconNumber}`).classList.add('active');
         }
 
-        // 生产成品动画
-        function produceFinishedProduct() {
-            processingProduct.style.opacity = 1;
-            processingProduct.style.left = `${productionNodes.end + 20}px`;
-            setTimeout(() => {
-                processingProduct.style.transform = `translate(${-70}px, -20px)`;
-                processingProduct.style.opacity = 0;
-                setTimeout(() => {
-                    finishedProduct.style.opacity = 1;
-                    finishedProduct.style.transform = "scale(1.2)";
-                    setTimeout(() => {
-                        finishedProduct.style.transform = "scale(1)";
-                        setTimeout(() => {
-                            finishedProduct.style.opacity = 0;
-                        }, 800);
-                    }, 300);
-                }, 600);
-            }, 500);
-        }
-
         // 重置产品
         function resetProducts() {
             [rawMaterial, processingProduct, finishedProduct].forEach(product => {
@@ -1800,6 +1948,9 @@
             optionsContainer.innerHTML = '';
             submitBtn.disabled = true;
         }
+
+        // 初始化缩放控制
+        initZoomControls();
     </script>
 </body>
 </html>
